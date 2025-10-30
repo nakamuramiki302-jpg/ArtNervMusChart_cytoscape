@@ -1,0 +1,294 @@
+/* 解剖学検索アプリのスタイル */
+
+.search-panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-btn, .clear-btn, .layout-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.search-btn:hover {
+    background-color: #0056b3;
+}
+
+.clear-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.clear-btn:hover {
+    background-color: #545b62;
+}
+
+.layout-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.layout-btn:hover {
+    background-color: #218838;
+}
+
+.search-results {
+    max-height: 300px;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-results h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-group-item {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-top: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.list-group-item:first-child {
+    border-top: 1px solid #ddd;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.list-group-item:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.list-group-item:hover {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+    cursor: pointer;
+    transform: translateX(5px);
+    transition: all 0.2s ease;
+}
+
+.badge {
+    color: white;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* 解剖学的タイプ別のバッジ色（色盲対応） */
+.badge.muscle {
+    background-color: #E91E63; /* 筋肉 - ピンク */
+}
+
+.badge.artery {
+    background-color: #D32F2F; /* 動脈 - 赤 */
+}
+
+.badge.nerve {
+    background-color: #388E3C; /* 神経 - 緑 */
+}
+
+.badge.joint {
+    background-color: #1976D2; /* 関節 - 青 */
+}
+
+.badge.unknown {
+    background-color: #616161; /* その他 - グレー */
+}
+
+/* レイアウト情報パネル */
+.layout-info-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.layout-info-panel h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.layout-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-shape {
+    font-size: 18px;
+    width: 25px;
+    text-align: center;
+}
+
+.legend-text {
+    font-size: 14px;
+    color: #555;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .layout-info-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+    }
+    
+    .layout-legend {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+.list-group-item.selected {
+    background-color: #e8f5e8;
+    border-color: #4caf50;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+.list-group-item:active {
+    background-color: #c8e6c9;
+    transform: translateX(3px);
+}
+
+.list-group-item.clicked {
+    background-color: #ffeb3b;
+    border-color: #ff9800;
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+    font-weight: bold;
+}
+
+.search-results .selected-item {
+    background-color: #e8f5e8;
+    border-left: 4px solid #4caf50;
+    font-weight: bold;
+}
+
+.neighbors-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.neighbors-panel h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+/* ノードのハイライト - Cytoscape.js用のクラス */
+.highlighted-node {
+    border-width: 5px !important;
+    border-color: #ff6b6b !important;
+    background-color: #ffebee !important;
+}
+
+.neighbor-node {
+    border-width: 3px !important;
+    border-color: #4ecdc4 !important;
+    background-color: #e0f2f1 !important;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .search-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+    }
+    
+    .neighbors-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        top: auto;
+        bottom: 20px;
+    }
+    
+    .search-container {
+        flex-direction: column;
+    }
+}

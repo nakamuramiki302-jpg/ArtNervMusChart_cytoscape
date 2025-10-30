@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>検索テスト</title>
+</head>
+<body>
+    <h1>解剖学アプリ検索テスト</h1>
+    <input type="text" id="test-search" placeholder="検索語を入力">
+    <button onclick="testSearch()">テスト検索</button>
+    <div id="test-results"></div>
+
+    <script src="data/translation-dictionary.js"></script>
+    <script>
+        function testSearch() {
+            const query = document.getElementById('test-search').value;
+            const resultsDiv = document.getElementById('test-results');
+            
+            console.log('テスト検索:', query);
+            
+            // 翻訳テスト
+            if (typeof translateToEnglish === 'function') {
+                const translated = translateToEnglish(query);
+                console.log('翻訳結果:', translated);
+                resultsDiv.innerHTML = `
+                    <h3>翻訳テスト</h3>
+                    <p>入力: ${query}</p>
+                    <p>翻訳: ${translated}</p>
+                `;
+            } else {
+                resultsDiv.innerHTML = '<p>翻訳機能が読み込まれていません</p>';
+            }
+            
+            // 類似語テスト
+            if (typeof findSimilarTerms === 'function') {
+                const similar = findSimilarTerms(query);
+                console.log('類似語:', similar);
+                resultsDiv.innerHTML += `
+                    <h3>類似語テスト</h3>
+                    <p>類似語: ${similar.join(', ')}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

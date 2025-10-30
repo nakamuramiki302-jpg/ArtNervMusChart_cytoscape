@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ハイライトテスト</title>
+    <script src="scripts/65d77273.vendor.js"></script>
+    <script src="scripts/1d327552.scripts.js"></script>
+    <script src="data/networks.js"></script>
+    <script src="data/styles.js"></script>
+</head>
+
+<body>
+    <h1>ハイライトテスト</h1>
+    <div id="cy" style="width: 800px; height: 600px; border: 1px solid #ccc;"></div>
+    <button onclick="testHighlight()">最初のノードをハイライト</button>
+    <button onclick="clearHighlight()">ハイライトクリア</button>
+    なお
+    <script>
+        let cy;
+
+        // Cytoscapeを初期化
+        document.addEventListener('DOMContentLoaded', function () {
+            const networkData = networks.musclesNervArteryJoint;
+
+            cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: networkData.elements,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': '#666',
+                            'label': 'data(name)',
+                            'width': '30px',
+                            'height': '30px'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2,
+                            'line-color': '#ccc'
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'preset'
+                }
+            });
+
+            console.log('テスト用Cytoscape初期化完了');
+            console.log('ノード数:', cy.nodes().length);
+        });
+
+        function testHighlight() {
+            if (!cy || cy.nodes().length === 0) {
+                console.log('Cytoscapeまたはノードが見つかりません');
+                return;
+            }
+
+            const firstNode = cy.nodes()[0];
+            console.log('ハイライトテスト開始:', firstNode.data());
+
+            firstNode.style({
+                'border-width': '10px',
+                'border-color': '#ff0000',
+                'background-color': '#ffcccc',
+                'width': '60px',
+                'height': '60px'
+            });
+
+            cy.center(firstNode);
+            cy.zoom(2);
+
+            console.log('ハイライト完了');
+        }
+
+        function clearHighlight() {
+            if (!cy) return;
+
+            cy.nodes().removeStyle();
+            cy.fit();
+            console.log('ハイライトクリア完了');
+        }
+    </script>
+</body>
+
+</html>

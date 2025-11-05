@@ -39,6 +39,10 @@
         
         <!-- Search Panel -->
         <div class="search-panel" id="draggable-search-panel" style="width: 240px !important; cursor: move;">
+            <div class="search-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: bold; color: #333;">Search</span>
+                <button type="button" class="close-search-btn" onclick="toggleSearchPanel()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #666; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">×</button>
+            </div>
             <div class="search-container" style="display: flex !important; flex-direction: column !important; gap: 10px; align-items: flex-start !important;">
                 <input type="text" id="search-input" ng-model="searchQuery" placeholder="search anatomy terms" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()" style="width: 100% !important; box-sizing: border-box;">
                 <button type="button" class="btn btn-primary search-btn" onclick="directSearch()" style="width: 100% !important; display: block !important; box-sizing: border-box;">Search</button>
@@ -52,6 +56,11 @@
                     </li>
                 </ul>
             </div>
+        </div>
+        
+        <!-- フローティング検索ボタン（検索パネルが非表示の時に表示） -->
+        <div class="floating-search-btn" id="floating-search-btn" onclick="toggleSearchPanel()" style="display: none; position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; background: #007bff; color: white; border: none; border-radius: 50%; cursor: pointer; z-index: 1002; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-size: 20px; align-items: center; justify-content: center;">
+            🔍
         </div>
         
         <!-- Neighbors Panel -->
@@ -624,17 +633,25 @@
                   const targetColors = anatomyColors[targetNodeType];
                   console.log('ターゲットノード色:', targetColors);
 
+                  // スマホかどうかを判定
+                  const isMobile = window.innerWidth <= 768;
+                  const targetSize = isMobile ? '80px' : '60px'; // スマホでは大きく表示
+                  const borderWidth = isMobile ? '10px' : '8px';
+
                   targetNode.style({
-                        'border-width': '8px',
+                        'border-width': borderWidth,
                         'border-color': targetColors.border,
                         'background-color': targetColors.highlight,
-                        'width': '60px',
-                        'height': '60px',
+                        'width': targetSize,
+                        'height': targetSize,
                         'z-index': '999'
                   });
+                  
+                  console.log('ターゲットノードサイズ設定:', { isMobile, targetSize, borderWidth });
 
                   // 隣接ノードを円状に配置（改良版）
-                  const radius = 150;
+                  // スマホでは半径を大きくして見やすくする
+                  const radius = isMobile ? 200 : 150;
                   const neighborsArray = neighbors.toArray(); // Cytoscapeコレクションを配列に変換
 
                   console.log('隣接ノード配列長:', neighborsArray.length);
@@ -662,13 +679,17 @@
 
                         // 隣接ノードの元の色を保持して拡大表示
                         const neighborColors = anatomyColors[neighborType];
+                        
+                        // スマホでは隣接ノードも大きく表示
+                        const neighborSize = isMobile ? '50px' : '40px';
+                        const neighborBorderWidth = isMobile ? '5px' : '4px';
 
                         neighbor.style({
-                              'border-width': '4px',
+                              'border-width': neighborBorderWidth,
                               'border-color': neighborColors.border,
                               'background-color': neighborColors.background,
-                              'width': '40px',
-                              'height': '40px'
+                              'width': neighborSize,
+                              'height': neighborSize
                         });
                   });
 
@@ -1229,6 +1250,24 @@
                   setTimeout(makeDraggable, 1000); // AngularJSの初期化を待つ
             });
 
+            // 検索パネルの表示/非表示を切り替える関数
+            function toggleSearchPanel() {
+                  const searchPanel = document.getElementById('draggable-search-panel');
+                  const floatingBtn = document.getElementById('floating-search-btn');
+                  
+                  if (searchPanel.style.display === 'none') {
+                        // 検索パネルを表示
+                        searchPanel.style.display = 'block';
+                        floatingBtn.style.display = 'none';
+                        console.log('検索パネルを表示しました');
+                  } else {
+                        // 検索パネルを非表示
+                        searchPanel.style.display = 'none';
+                        floatingBtn.style.display = 'flex';
+                        console.log('検索パネルを非表示にしました');
+                  }
+            }
+
             // グローバル関数として公開
             window.applyAnatomyLayout = applyAnatomyLayout;
             window.highlightSelectedNode = highlightSelectedNode;
@@ -1237,6 +1276,7 @@
             window.directClear = directClear;
             window.debugAortaNode = debugAortaNode;
             window.makeDraggable = makeDraggable;
+            window.toggleSearchPanel = toggleSearchPanel;
 
             // デバッグ用: AngularJSスコープの確認
             window.debugAngular = function () {

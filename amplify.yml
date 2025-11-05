@@ -1,0 +1,13 @@
+version: 1
+frontend:
+  phases:
+    # 静的サイトなのでビルドフェーズは不要
+    build:
+      commands: []
+  artifacts:
+    # すべてのファイルをそのまま配信
+    baseDirectory: .
+    files:
+      - '**/*'
+  cache:
+    paths: []

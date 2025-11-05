@@ -324,6 +324,17 @@ body {
         z-index: 1001 !important;
         padding: 10px !important;
         font-size: 16px; /* iOS Safariのズーム防止 */
+        max-height: calc(100vh - 40px) !important; /* iPhone画面に収まるように */
+        overflow-y: auto !important;
+    }
+    
+    /* フローティング検索ボタンをスマホ用に調整 */
+    .floating-search-btn {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 24px !important;
+        top: 20px !important;
+        left: 20px !important;
     }
     
     /* 検索入力フィールドをスマホ用に調整 */
@@ -382,21 +393,47 @@ body {
     }
 }
 
-/* 極小画面（iPhone SE等）対応 */
-@media (max-width: 375px) {
+/* iPhone対応（iPhone 12/13/14等の標準サイズ） */
+@media (max-width: 430px) {
     .search-panel {
-        width: calc(100% - 10px) !important;
-        left: 5px !important;
-        right: 5px !important;
-        padding: 8px !important;
+        width: calc(100% - 16px) !important;
+        left: 8px !important;
+        right: 8px !important;
+        padding: 12px !important;
+        max-height: calc(100vh - 100px) !important; /* iPhone画面に確実に収まる */
     }
     
     .neighbors-panel {
-        width: calc(100% - 10px) !important;
-        left: 5px !important;
-        right: 5px !important;
-        padding: 8px !important;
-        max-height: 150px !important;
+        width: calc(100% - 16px) !important;
+        left: 8px !important;
+        right: 8px !important;
+        padding: 12px !important;
+        max-height: calc(40vh) !important; /* 画面の40%まで */
+    }
+    
+    .floating-search-btn {
+        width: 56px !important;
+        height: 56px !important;
+        font-size: 22px !important;
+    }
+}
+
+/* 極小画面（iPhone SE等）対応 */
+@media (max-width: 375px) {
+    .search-panel {
+        width: calc(100% - 12px) !important;
+        left: 6px !important;
+        right: 6px !important;
+        padding: 10px !important;
+        max-height: calc(100vh - 80px) !important;
+    }
+    
+    .neighbors-panel {
+        width: calc(100% - 12px) !important;
+        left: 6px !important;
+        right: 6px !important;
+        padding: 10px !important;
+        max-height: calc(35vh) !important;
     }
     
     .search-input, .search-btn, .clear-btn {
@@ -409,5 +446,22 @@ body {
         padding: 10px !important;
         font-size: 13px !important;
         min-height: 40px !important;
+    }
+    
+    .floating-search-btn {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 20px !important;
+    }
+}
+
+/* iPhone Pro Max等の大画面対応 */
+@media (max-width: 768px) and (min-height: 800px) {
+    .search-panel {
+        max-height: calc(60vh) !important; /* 大画面では少し大きく */
+    }
+    
+    .neighbors-panel {
+        max-height: calc(45vh) !important;
     }
 }

@@ -51,7 +51,7 @@
             <div class="search-results" ng-show="searchResults.length > 0">
                 <h4>Search Results ({{searchResults.length}} items)</h4>
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="result in searchResults" ng-class="{'selected-item': result.selected}" onclick="selectSearchResult(this.getAttribute('data-result-id'), this.getAttribute('data-result-name'), this.getAttribute('data-result-index'))" data-result-id="{{result.id}}" data-result-name="{{result.name}}" data-result-index="{{$index}}">
+                    <li class="list-group-item" ng-repeat="result in searchResults" ng-class="{'selected-item': result.selected}" onclick="fixedSelectSearchResult(this.getAttribute('data-result-id'), this.getAttribute('data-result-name'), this.getAttribute('data-result-index'))" data-result-id="{{result.id}}" data-result-name="{{result.name}}" data-result-index="{{$index}}">
                         {{result.name}} <span class="badge {{result.anatomyType || result.type}}">{{result.anatomyType || result.type}}</span>
                     </li>
                 </ul>
@@ -568,7 +568,8 @@
             // ノードハイライト関数（デバッグ強化版）
             function highlightSelectedNode(nodeId, nodeName) {
                   console.log('=== ノードハイライト開始 ===');
-                  console.log('ID:', nodeId, 'Name:', nodeName);
+                  console.log('受信パラメータ:', { nodeId, nodeName });
+                  console.log('パラメータ型:', { nodeIdType: typeof nodeId, nodeNameType: typeof nodeName });
 
                   const cy = window.cy;
                   if (!cy) {
@@ -576,11 +577,22 @@
                         return;
                   }
 
+                  console.log('Cytoscape確認OK, 総ノード数:', cy.nodes().length);
+
                   const targetNode = cy.getElementById(nodeId);
+                  console.log('ノード検索結果:', targetNode);
+                  console.log('ノード長さ:', targetNode ? targetNode.length : 'undefined');
+                  
                   if (!targetNode || targetNode.length === 0) {
                         console.error('ノードが見つかりません:', nodeId);
+                        console.log('利用可能なノードID一覧（最初の10個）:');
+                        cy.nodes().slice(0, 10).forEach(function(node, index) {
+                              console.log(`${index}: ${node.id()} - ${node.data('name') || node.data('shared_name')}`);
+                        });
                         return;
                   }
+
+                  console.log('ターゲットノード確認OK:', targetNode.id());
 
                   // ターゲットノードの詳細情報をデバッグ出力
                   const targetData = targetNode.data();
@@ -1268,6 +1280,82 @@
                   }
             }
 
+            // デバッグ用：検索結果選択のテスト関数
+            function testSearchSelection() {
+                  console.log('=== 検索選択テスト開始 ===');
+                  
+                  const cy = window.cy;
+                  if (!cy) {
+                        console.error('Cytoscapeインスタンスが見つかりません');
+                        return;
+                  }
+                  
+                  // 最初のノードを取得してテスト
+                  const firstNode = cy.nodes()[0];
+                  if (firstNode) {
+                        const nodeId = firstNode.id();
+                        const nodeName = firstNode.data('name') || firstNode.data('shared_name');
+                        console.log('テスト用ノード:', { id: nodeId, name: nodeName });
+                        
+                        // 直接highlightSelectedNodeを呼び出し
+                        highlightSelectedNode(nodeId, nodeName);
+                  } else {
+                        console.error('テスト用ノードが見つかりません');
+                  }
+            }
+
+            // 検索結果選択の問題を修正する関数
+            function fixedSelectSearchResult(resultId, resultName, resultIndex) {
+                  console.log('=== 修正版検索結果選択 ===');
+                  console.log('受信パラメータ:', { resultId, resultName, resultIndex });
+
+                  if (!resultId || !resultName) {
+                        console.error('無効なパラメータ:', { resultId, resultName, resultIndex });
+                        return;
+                  }
+
+                  // Cytoscapeインスタンスの確認
+                  const cy = window.cy;
+                  if (!cy) {
+                        console.error('Cytoscapeインスタンスが見つかりません');
+                        return;
+                  }
+
+                  // ノードの存在確認
+                  const targetNode = cy.getElementById(resultId);
+                  if (!targetNode || targetNode.length === 0) {
+                        console.error('ノードが見つかりません:', resultId);
+                        return;
+                  }
+
+                  console.log('ノード確認OK:', targetNode.data());
+
+                  // 検索結果の選択状態を更新
+                  try {
+                        const scope = angular.element(document.body).scope();
+                        if (scope && scope.searchResults) {
+                              scope.$apply(function () {
+                                    scope.searchResults.forEach(function (item) {
+                                          item.selected = false;
+                                    });
+                                    const index = parseInt(resultIndex);
+                                    if (scope.searchResults[index]) {
+                                          scope.searchResults[index].selected = true;
+                                    }
+                              });
+                              console.log('検索結果選択状態更新完了');
+                        }
+                  } catch (e) {
+                        console.error('検索結果選択状態更新エラー:', e);
+                  }
+
+                  // ノードをハイライト（強制実行）
+                  console.log('highlightSelectedNode実行中...');
+                  setTimeout(function() {
+                        highlightSelectedNode(resultId, resultName);
+                  }, 100);
+            }
+
             // グローバル関数として公開
             window.applyAnatomyLayout = applyAnatomyLayout;
             window.highlightSelectedNode = highlightSelectedNode;
@@ -1277,6 +1365,8 @@
             window.debugAortaNode = debugAortaNode;
             window.makeDraggable = makeDraggable;
             window.toggleSearchPanel = toggleSearchPanel;
+            window.testSearchSelection = testSearchSelection;
+            window.fixedSelectSearchResult = fixedSelectSearchResult;
 
             // デバッグ用: AngularJSスコープの確認
             window.debugAngular = function () {

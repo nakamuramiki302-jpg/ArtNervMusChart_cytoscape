@@ -11,10 +11,33 @@
         cytoscapeInstance = cy;
         console.log('Cytoscape インスタンス設定完了');
 
-        // ノードクリックイベント
+        // ノードクリックイベント（フォーカスモード使用）
         cy.on('tap', 'node', function (evt) {
             const node = evt.target;
-            highlightNodeAndNeighbors(node);
+            const nodeId = node.id();
+            const nodeName = node.data('name') || node.data('shared_name') || '';
+            
+            console.log('=== anatomy-fix.js: ノードタップ検出 ===');
+            console.log('- ID:', nodeId);
+            console.log('- Name:', nodeName);
+            console.log('- ノードの状態:', {
+                locked: node.locked(),
+                visible: node.visible(),
+                selected: node.selected()
+            });
+            
+            // イベントの伝播を確実にする
+            evt.stopPropagation();
+            
+            // index.htmlのhighlightSelectedNode関数を呼び出し（フォーカスモード）
+            if (typeof window.highlightSelectedNode === 'function') {
+                console.log('highlightSelectedNode関数を呼び出し中...');
+                window.highlightSelectedNode(nodeId, nodeName);
+            } else {
+                console.error('highlightSelectedNode関数が見つかりません - フォールバック使用');
+                // フォールバック: 従来の方法
+                highlightNodeAndNeighbors(node);
+            }
         });
 
         // 背景クリックでクリア

@@ -442,6 +442,62 @@ angular.module('cyViewerApp')
             }
         };
 
+        // 隣接ノード選択関数（新しい中心として設定）
+        $scope.selectNeighborFromList = function(neighborId, neighborName, neighborIndex) {
+            console.log('=== 隣接ノード選択（AngularJS経由） ===');
+            console.log('ID:', neighborId);
+            console.log('Name:', neighborName);
+            console.log('Index:', neighborIndex);
+            console.log('関数が呼び出されました！');
+            
+            if (!neighborId || !neighborName) {
+                console.error('無効なパラメータ:', { neighborId, neighborName, neighborIndex });
+                return;
+            }
+            
+            // 隣接ノードの選択状態を更新
+            $scope.selectedNodeNeighbors.forEach(function(item) {
+                item.selected = false;
+            });
+            
+            if ($scope.selectedNodeNeighbors[neighborIndex]) {
+                $scope.selectedNodeNeighbors[neighborIndex].selected = true;
+                console.log('選択状態更新完了');
+            }
+            
+            // 選択されたneighborを新しい中心として設定
+            console.log('neighborを新しい中心として設定:', neighborName);
+            
+            // グローバル関数の存在確認
+            console.log('highlightSelectedNode関数の存在確認:', typeof window.highlightSelectedNode);
+            console.log('グローバルスコープの確認:', typeof highlightSelectedNode);
+            
+            // index.htmlのhighlightSelectedNode関数を呼び出し
+            if (typeof window.highlightSelectedNode === 'function') {
+                setTimeout(function() {
+                    console.log('window.highlightSelectedNode実行中...');
+                    window.highlightSelectedNode(neighborId, neighborName);
+                    console.log('window.highlightSelectedNode完了');
+                }, 100);
+            } else if (typeof highlightSelectedNode === 'function') {
+                setTimeout(function() {
+                    console.log('highlightSelectedNode実行中...');
+                    highlightSelectedNode(neighborId, neighborName);
+                    console.log('highlightSelectedNode完了');
+                }, 100);
+            } else {
+                console.error('highlightSelectedNode関数が見つかりません - フォールバック使用');
+                // フォールバック: 直接選択
+                $scope.directSelectNode(neighborId, neighborName);
+            }
+        };
+        
+        // デバッグ用テスト関数
+        $scope.testNeighborClick = function() {
+            console.log('テスト関数が呼び出されました！');
+            alert('テスト関数が動作しています');
+        };
+
         // 直接ノード選択関数（HTMLから直接呼び出し用）
         $scope.directSelectNode = function(nodeId, nodeName) {
             console.log('=== 直接ノード選択 ===');

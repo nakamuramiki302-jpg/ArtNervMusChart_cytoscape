@@ -1,10 +1,50 @@
-/* 解剖学検索アプリのスタイル */
+/* 解剖学検索アプリのスタイル - 縦一列レイアウト版 + ドラッグ機能 */
+
+/* デフォルト背景色を黒に設定 */
+#network {
+    background-color: #000000 !important;
+}
+
+body {
+    background-color: #000000 !important;
+    /* スマホでのタッチ操作を改善 */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* スマホでのスクロールを滑らかに */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ドラッグ可能なパネル用のスタイル */
+#draggable-search-panel {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#draggable-search-panel:active {
+    cursor: grabbing !important;
+}
+
+/* 入力フィールドとボタンはドラッグ時に選択可能にする */
+#draggable-search-panel input,
+#draggable-search-panel button {
+    user-select: auto;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    cursor: auto;
+}
 
 .search-panel {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 350px;
+    width: 200px; /* 縦一列レイアウトに合わせて幅を縮小 */
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -13,26 +53,33 @@
     z-index: 1000;
 }
 
-.search-container {
-    display: flex;
+.search-panel .search-container {
+    display: flex !important;
+    flex-direction: column !important;
     gap: 10px;
     margin-bottom: 15px;
+    align-items: flex-start !important;
 }
 
 .search-input {
-    flex: 1;
+    width: 100% !important;
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+    box-sizing: border-box;
+    margin-bottom: 0 !important;
 }
 
-.search-btn, .clear-btn, .layout-btn {
+.search-btn, .clear-btn {
+    width: 120px !important; /* 英単語3つ分の幅 */
     padding: 8px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    align-self: flex-start !important;
+    display: block !important;
 }
 
 .search-btn {
@@ -53,14 +100,7 @@
     background-color: #545b62;
 }
 
-.layout-btn {
-    background-color: #28a745;
-    color: white;
-}
 
-.layout-btn:hover {
-    background-color: #218838;
-}
 
 .search-results {
     max-height: 300px;
@@ -272,23 +312,102 @@
     background-color: #e0f2f1 !important;
 }
 
-/* レスポンシブ対応 */
+/* スマホ対応のレスポンシブデザイン */
 @media (max-width: 768px) {
+    /* 検索パネルをスマホ用に調整 */
     .search-panel {
-        width: calc(100% - 40px);
-        left: 20px;
-        right: 20px;
+        width: calc(100% - 20px) !important;
+        left: 10px !important;
+        right: 10px !important;
+        top: 10px !important;
+        position: fixed !important;
+        z-index: 1001 !important;
+        padding: 10px !important;
+        font-size: 16px; /* iOS Safariのズーム防止 */
+    }
+    
+    /* 検索入力フィールドをスマホ用に調整 */
+    .search-input {
+        font-size: 16px !important; /* iOS Safariのズーム防止 */
+        padding: 12px !important;
+        height: 44px !important; /* タッチしやすい高さ */
+        box-sizing: border-box !important;
+    }
+    
+    /* ボタンをスマホ用に調整 */
+    .search-btn, .clear-btn {
+        width: 100% !important;
+        height: 44px !important; /* タッチしやすい高さ */
+        font-size: 16px !important;
+        padding: 12px !important;
+        margin: 5px 0 !important;
+        box-sizing: border-box !important;
+        align-self: stretch !important;
+    }
+    
+    /* 隣接ノードパネルをスマホ用に調整 */
+    .neighbors-panel {
+        width: calc(100% - 20px) !important;
+        left: 10px !important;
+        right: 10px !important;
+        top: auto !important;
+        bottom: 10px !important;
+        max-height: 200px !important;
+        position: fixed !important;
+        z-index: 1001 !important;
+        padding: 10px !important;
+    }
+    
+    /* 検索結果をスマホ用に調整 */
+    .search-results {
+        max-height: 150px !important;
+        font-size: 14px !important;
+    }
+    
+    .list-group-item {
+        padding: 12px !important;
+        font-size: 14px !important;
+        min-height: 44px !important; /* タッチしやすい高さ */
+    }
+    
+    /* レイアウト情報パネルを非表示 */
+    .layout-info-panel {
+        display: none !important;
+    }
+    
+    /* ネットワーク表示エリアの調整 */
+    #network {
+        padding-top: 120px !important; /* 検索パネル分のスペース */
+        padding-bottom: 220px !important; /* 隣接パネル分のスペース */
+    }
+}
+
+/* 極小画面（iPhone SE等）対応 */
+@media (max-width: 375px) {
+    .search-panel {
+        width: calc(100% - 10px) !important;
+        left: 5px !important;
+        right: 5px !important;
+        padding: 8px !important;
     }
     
     .neighbors-panel {
-        width: calc(100% - 40px);
-        left: 20px;
-        right: 20px;
-        top: auto;
-        bottom: 20px;
+        width: calc(100% - 10px) !important;
+        left: 5px !important;
+        right: 5px !important;
+        padding: 8px !important;
+        max-height: 150px !important;
     }
     
-    .search-container {
-        flex-direction: column;
+    .search-input, .search-btn, .clear-btn {
+        font-size: 14px !important;
+        height: 40px !important;
+        padding: 10px !important;
+    }
+    
+    .list-group-item {
+        padding: 10px !important;
+        font-size: 13px !important;
+        min-height: 40px !important;
     }
 }

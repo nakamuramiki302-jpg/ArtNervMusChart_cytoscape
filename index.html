@@ -8,7 +8,10 @@
       <title>Anatomy Learning App</title>
       <meta name="description"
             content="Interactive anatomy learning application with search and neighbor visualization">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+      <meta name="format-detection" content="telephone=no">
       <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
       <link rel="stylesheet" href="styles/dc4be20e.vendor.css">
       <link rel="stylesheet" href="styles/dcab8a36.main.css">
@@ -30,16 +33,16 @@
     <![endif]-->
 
       <script type="text/ng-template" id="main.html">
-        <div id="network" ng-style="{'background-color': bg.color}"></div>
+        <div ng-controller="MainCtrl">
+        <div id="network" ng-style="{'background-color': bg.color}" style="background-color: #000000 !important;"></div>
         <div class="loading"><span us-spinner="{radius:30, width:3, length: 100}"></span></div>
         
         <!-- Search Panel -->
-        <div class="search-panel">
-            <div class="search-container">
-                <input type="text" id="search-input" ng-model="searchQuery" placeholder="Search anatomy terms (Japanese/English)" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()">
-                <button type="button" class="btn btn-primary search-btn" onclick="directSearch()">Search</button>
-                <button type="button" class="btn btn-secondary clear-btn" onclick="directClear()">Clear</button>
-                <button type="button" class="btn btn-success layout-btn" onclick="applyAnatomyLayout()" title="Apply Anatomy Layout">🎨 Layout</button>
+        <div class="search-panel" id="draggable-search-panel" style="width: 240px !important; cursor: move;">
+            <div class="search-container" style="display: flex !important; flex-direction: column !important; gap: 10px; align-items: flex-start !important;">
+                <input type="text" id="search-input" ng-model="searchQuery" placeholder="search anatomy terms" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()" style="width: 100% !important; box-sizing: border-box;">
+                <button type="button" class="btn btn-primary search-btn" onclick="directSearch()" style="width: 100% !important; display: block !important; box-sizing: border-box;">Search</button>
+                <button type="button" class="btn btn-secondary clear-btn" onclick="directClear()" style="width: 100% !important; display: block !important; box-sizing: border-box;">Clear</button>
             </div>
             <div class="search-results" ng-show="searchResults.length > 0">
                 <h4>Search Results ({{searchResults.length}} items)</h4>
@@ -55,7 +58,7 @@
         <div class="neighbors-panel" ng-show="selectedNodeNeighbors.length > 0">
             <h4>Adjacent Structures</h4>
             <ul class="list-group">
-                <li class="list-group-item" ng-repeat="neighbor in selectedNodeNeighbors" ng-class="{'selected-item': neighbor.selected}" onclick="selectNeighborNode(this.getAttribute('data-neighbor-id'), this.getAttribute('data-neighbor-name'), this.getAttribute('data-neighbor-index'))" data-neighbor-id="{{neighbor.id}}" data-neighbor-name="{{neighbor.name}}" data-neighbor-index="{{$index}}">
+                <li class="list-group-item" ng-repeat="neighbor in selectedNodeNeighbors" ng-class="{'selected-item': neighbor.selected}" ng-click="selectNeighborFromList(neighbor.id, neighbor.name, $index)" onclick="window.directSelectNeighbor(this.getAttribute('data-neighbor-id'), this.getAttribute('data-neighbor-name'), this.getAttribute('data-neighbor-index'))" data-neighbor-id="{{neighbor.id}}" data-neighbor-name="{{neighbor.name}}" data-neighbor-index="{{$index}}" style="cursor: pointer;">
                     {{neighbor.name}} <span class="badge {{neighbor.anatomyType || neighbor.type}}">{{neighbor.anatomyType || neighbor.type}}</span>
                 </li>
             </ul>
@@ -76,10 +79,6 @@
                 <div class="legend-item">
                     <span class="legend-shape triangle">🔺</span>
                     <span class="legend-text">Nerves (Triangle Shape)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-shape circle">⚪</span>
-                    <span class="legend-text">Joints (Circle)</span>
                 </div>
             </div>
         </div>
@@ -149,6 +148,7 @@
             <div class="icon-button" colorpicker="" colorpicker-position="left" ng-model="bg.color" tooltip-placement="left" tooltip="Set Background Color">
                 <span class="glyphicon glyphicon-tint"></span>
             </div>
+        </div>
         </div>
     </script>
 
@@ -254,6 +254,9 @@
                   // Cytoscapeの解剖学レイアウトを再適用
                   const cy = window.cy;
                   if (cy) {
+                        // 全ノードのロックを解除
+                        cy.nodes().unlock();
+
                         // 全ノードとエッジを再表示
                         cy.nodes().style({
                               'opacity': 1,
@@ -326,9 +329,9 @@
                   highlightSelectedNode(resultId, resultName);
             }
 
-            // 隣接ノード選択関数
+            // 隣接ノード選択関数（新しい中心として設定）
             function selectNeighborNode(neighborId, neighborName, neighborIndex) {
-                  console.log('=== 隣接ノード選択 ===');
+                  console.log('=== 隣接ノード選択（新しい中心として） ===');
                   console.log('ID:', neighborId);
                   console.log('Name:', neighborName);
                   console.log('Index:', neighborIndex);
@@ -359,8 +362,16 @@
                         console.error('隣接ノード選択状態更新エラー:', e);
                   }
 
-                  // ノードをハイライト
-                  highlightSelectedNode(neighborId, neighborName);
+                  // 選択されたneighborを新しい中心としてハイライト（フォーカスモード）
+                  console.log('neighborを新しい中心として設定:', neighborName);
+                  console.log('highlightSelectedNode呼び出し前 - ID:', neighborId, 'Name:', neighborName);
+
+                  // 少し遅延を入れてUI更新を確実にする
+                  setTimeout(function () {
+                        console.log('highlightSelectedNode実行中...');
+                        highlightSelectedNode(neighborId, neighborName);
+                        console.log('highlightSelectedNode完了');
+                  }, 100);
             }
 
             // 色盲対応の色パレット定義
@@ -408,31 +419,44 @@
                   return getNodeTypeFromData(node.data());
             }
 
-            // ノードデータからタイプを判定する関数
+            // ノードデータからタイプを判定する関数（改良版）
             function getNodeTypeFromData(nodeData) {
                   const type1 = (nodeData.P1attr || '').toLowerCase();
                   const type2 = (nodeData.P2attr || '').toLowerCase();
                   const name = (nodeData.name || '').toLowerCase();
                   const sharedName = (nodeData.shared_name || '').toLowerCase();
 
+                  // デバッグ出力
+                  console.log('ノードタイプ判定:', {
+                        name: name,
+                        sharedName: sharedName,
+                        P1attr: type1,
+                        P2attr: type2
+                  });
+
+                  // 動脈系の判定（aortaを優先的に判定）
+                  if (type1.includes('artery') || type2.includes('artery') ||
+                        name.includes('artery') || sharedName.includes('artery') ||
+                        name.includes('aorta') || sharedName.includes('aorta') ||
+                        name.includes('aortic') || sharedName.includes('aortic') ||
+                        type1.includes('aorta') || type2.includes('aorta')) {
+                        console.log('→ 動脈系として判定');
+                        return 'artery';
+                  }
+
                   // 筋肉系の判定
                   if (type1.includes('muscle') || type2.includes('muscle') ||
                         name.includes('muscle') || sharedName.includes('muscle') ||
                         name.includes('sphincter') || sharedName.includes('sphincter')) {
+                        console.log('→ 筋肉系として判定');
                         return 'muscle';
-                  }
-
-                  // 動脈系の判定
-                  if (type1.includes('artery') || type2.includes('artery') ||
-                        name.includes('artery') || sharedName.includes('artery') ||
-                        name.includes('aorta') || sharedName.includes('aorta')) {
-                        return 'artery';
                   }
 
                   // 神経系の判定
                   if (type1.includes('nerve') || type2.includes('nerve') ||
                         name.includes('nerve') || sharedName.includes('nerve') ||
                         name.includes('neural') || sharedName.includes('neural')) {
+                        console.log('→ 神経系として判定');
                         return 'nerve';
                   }
 
@@ -440,9 +464,11 @@
                   if (type1.includes('joint') || type2.includes('joint') ||
                         name.includes('joint') || sharedName.includes('joint') ||
                         name.includes('bone') || sharedName.includes('bone')) {
+                        console.log('→ 関節・骨格系として判定');
                         return 'joint';
                   }
 
+                  console.log('→ 不明として判定');
                   return 'unknown';
             }
 
@@ -450,11 +476,11 @@
             function truncateText(text, maxLength) {
                   if (!text) return '';
                   if (text.length <= maxLength) return text;
-                  
+
                   // 単語の境界で切る
                   const words = text.split(' ');
                   let result = '';
-                  
+
                   for (let word of words) {
                         if ((result + word).length <= maxLength) {
                               result += (result ? ' ' : '') + word;
@@ -462,7 +488,7 @@
                               break;
                         }
                   }
-                  
+
                   return result || text.substring(0, maxLength - 1) + '…';
             }
 
@@ -510,7 +536,7 @@
                   cy.nodes().forEach(function (node) {
                         const originalText = node.data('name') || node.data('shared_name') || '';
                         const shortText = truncateText(originalText, 8); // 8文字まで
-                        
+
                         node.style({
                               'label': shortText,
                               'font-size': '6px', // 非常に小さなフォント
@@ -530,9 +556,9 @@
                   console.log('エッジ数:', cy.edges().length);
             }
 
-            // ノードハイライト関数（フォーカスモード対応版）
+            // ノードハイライト関数（デバッグ強化版）
             function highlightSelectedNode(nodeId, nodeName) {
-                  console.log('=== ノードハイライト（フォーカスモード）===');
+                  console.log('=== ノードハイライト開始 ===');
                   console.log('ID:', nodeId, 'Name:', nodeName);
 
                   const cy = window.cy;
@@ -547,194 +573,151 @@
                         return;
                   }
 
-                  console.log('ノード発見:', {
-                        id: targetNode.id(),
-                        name: targetNode.data('name'),
-                        shared_name: targetNode.data('shared_name')
+                  // ターゲットノードの詳細情報をデバッグ出力
+                  const targetData = targetNode.data();
+                  console.log('ターゲットノードデータ:', {
+                        name: targetData.name,
+                        shared_name: targetData.shared_name,
+                        P1attr: targetData.P1attr,
+                        P2attr: targetData.P2attr
                   });
 
                   // 隣接ノードとエッジを取得
                   const neighbors = targetNode.neighborhood().nodes();
                   const connectedEdges = targetNode.neighborhood().edges();
-                  const visibleNodes = targetNode.union(neighbors);
-                  
-                  console.log('隣接ノード数:', neighbors.length);
-                  console.log('接続エッジ数:', connectedEdges.length);
 
-                  // 全ノードを非表示にする
+                  console.log('隣接ノード数:', neighbors.length);
+
+                  // 全ノードを非表示
                   cy.nodes().style({
                         'opacity': 0,
                         'display': 'none'
                   });
-
-                  // 全エッジを非表示にする
                   cy.edges().style({
                         'opacity': 0,
                         'display': 'none'
                   });
 
                   // 選択されたノードとその隣接ノードのみ表示
-                  visibleNodes.style({
+                  targetNode.union(neighbors).style({
                         'opacity': 1,
                         'display': 'element'
                   });
 
-                  // 接続エッジのみ表示
+                  // 接続エッジを表示
                   connectedEdges.style({
                         'opacity': 0.8,
                         'display': 'element',
-                        'width': '3px',
-                        'line-color': '#FF9800',
-                        'z-index': 100
+                        'width': '2px',
+                        'line-color': '#FF9800'
                   });
 
-                  // ターゲットノードを黄色でハイライト
-                  const highlightColors = anatomyColors.highlight;
-                  const targetText = targetNode.data('name') || targetNode.data('shared_name') || '';
-                  const targetShortText = truncateText(targetText, 15);
+                  // ターゲットノードを中央に配置
+                  const centerX = cy.width() / 2;
+                  const centerY = cy.height() / 2;
+                  targetNode.position({ x: centerX, y: centerY });
+
+                  // ターゲットノードの元の色を取得して拡大表示
+                  const targetNodeType = getNodeType(targetNode);
+                  console.log('ターゲットノードタイプ:', targetNodeType);
+
+                  const targetColors = anatomyColors[targetNodeType];
+                  console.log('ターゲットノード色:', targetColors);
 
                   targetNode.style({
-                        'border-width': '12px',
-                        'border-color': highlightColors.border,
-                        'background-color': highlightColors.background,
-                        'width': '80px',
-                        'height': '80px',
-                        'z-index': '999',
-                        'label': targetShortText,
-                        'font-size': '12px',
-                        'text-max-width': '75px',
-                        'color': '#000',
-                        'text-outline-width': 2,
-                        'text-outline-color': 'white',
-                        'text-outline-opacity': 1,
-                        'opacity': 1,
-                        'display': 'element'
+                        'border-width': '8px',
+                        'border-color': targetColors.border,
+                        'background-color': targetColors.highlight,
+                        'width': '60px',
+                        'height': '60px',
+                        'z-index': '999'
                   });
 
-                  // 隣接ノードを円状に配置（重複防止版）
-                  const centerPos = targetNode.position();
-                  
-                  // ノード数に応じて半径を動的に調整
-                  const baseNodeSize = neighbors.length > 12 ? 40 : neighbors.length > 6 ? 45 : 50;
-                  const minRadius = 120; // 最小半径
-                  const nodeSpacing = baseNodeSize + 25; // ノード間の最小間隔（余裕を持たせる）
-                  
-                  // 必要な円周を計算（ノード数 × ノード間隔）
-                  const requiredCircumference = neighbors.length * nodeSpacing;
-                  const calculatedRadius = requiredCircumference / (2 * Math.PI);
-                  const radius = Math.max(minRadius, calculatedRadius);
-                  
-                  console.log('円状配置:', {
-                        neighborCount: neighbors.length,
-                        calculatedRadius: calculatedRadius,
-                        finalRadius: radius,
-                        nodeSpacing: nodeSpacing
-                  });
-                  
-                  neighbors.forEach(function (neighbor, index) {
+                  // 隣接ノードを円状に配置（改良版）
+                  const radius = 150;
+                  const neighborsArray = neighbors.toArray(); // Cytoscapeコレクションを配列に変換
+
+                  console.log('隣接ノード配列長:', neighborsArray.length);
+
+                  neighborsArray.forEach(function (neighbor, index) {
+                        // 隣接ノードの詳細情報をデバッグ出力
+                        const neighborData = neighbor.data();
                         const neighborType = getNodeType(neighbor);
+                        console.log(`隣接ノード${index}:`, {
+                              name: neighborData.name || neighborData.shared_name,
+                              type: neighborType,
+                              P1attr: neighborData.P1attr,
+                              P2attr: neighborData.P2attr
+                        });
+
+                        // 確実に円状配置するための角度計算
+                        const angle = (index / neighborsArray.length) * 2 * Math.PI;
+                        const x = centerX + radius * Math.cos(angle);
+                        const y = centerY + radius * Math.sin(angle);
+
+                        console.log(`隣接ノード${index}位置:`, { angle: angle * 180 / Math.PI, x, y });
+
+                        // 位置を強制的に設定
+                        neighbor.position({ x: x, y: y });
+
+                        // 隣接ノードの元の色を保持して拡大表示
                         const neighborColors = anatomyColors[neighborType];
-                        const neighborText = neighbor.data('name') || neighbor.data('shared_name') || '';
-                        const neighborShortText = truncateText(neighborText, 12);
 
-                        // 円状に配置する角度を計算（均等分割）
-                        const angle = (index / neighbors.length) * 2 * Math.PI;
-                        
-                        // 多層配置（8個以上の場合）
-                        let currentRadius = radius;
-                        let currentAngle = angle;
-                        
-                        if (neighbors.length > 8) {
-                              // 内側と外側の2層に分ける
-                              if (index < Math.ceil(neighbors.length / 2)) {
-                                    // 内側の円（70%の半径）
-                                    currentRadius = radius * 0.7;
-                                    currentAngle = (index / Math.ceil(neighbors.length / 2)) * 2 * Math.PI;
-                              } else {
-                                    // 外側の円（通常の半径）
-                                    const outerIndex = index - Math.ceil(neighbors.length / 2);
-                                    const outerCount = neighbors.length - Math.ceil(neighbors.length / 2);
-                                    currentAngle = (outerIndex / outerCount) * 2 * Math.PI;
-                              }
-                        }
-                        
-                        const x = centerPos.x + currentRadius * Math.cos(currentAngle);
-                        const y = centerPos.y + currentRadius * Math.sin(currentAngle);
-
-                        // 位置を設定
-                        neighbor.position({ x: x, y: y });
-
-                        // スタイルを設定（サイズを調整）
-                        const neighborSize = neighbors.length > 12 ? '40px' : neighbors.length > 6 ? '45px' : '50px';
-                        const fontSize = neighbors.length > 12 ? '7px' : neighbors.length > 6 ? '8px' : '9px';
-                        const borderWidth = neighbors.length > 12 ? '6px' : neighbors.length > 6 ? '7px' : '8px';
-                        
                         neighbor.style({
-                              'border-width': borderWidth,
+                              'border-width': '4px',
                               'border-color': neighborColors.border,
-                              'background-color': neighborColors.highlight,
-                              'width': neighborSize,
-                              'height': neighborSize,
-                              'label': neighborShortText,
-                              'font-size': fontSize,
-                              'text-max-width': (parseInt(neighborSize) - 5) + 'px',
-                              'color': '#000',
-                              'text-outline-width': 1.5,
-                              'text-outline-color': 'white',
-                              'text-outline-opacity': 1,
-                              'opacity': 1,
-                              'display': 'element'
+                              'background-color': neighborColors.background,
+                              'width': '40px',
+                              'height': '40px'
                         });
                   });
 
-                  // 選択されたノードを画面中央に移動
-                  const canvasCenter = {
-                        x: cy.width() / 2,
-                        y: cy.height() / 2
-                  };
-                  
-                  // ターゲットノードを中央に移動
-                  targetNode.position(canvasCenter);
-                  
-                  // 隣接ノードの位置を再計算（ターゲットノードの新しい位置を基準に）
-                  neighbors.forEach(function (neighbor, index) {
-                        // 円状に配置する角度を計算（均等分割）
-                        const angle = (index / neighbors.length) * 2 * Math.PI;
-                        
-                        // 多層配置（8個以上の場合）
-                        let currentRadius = radius;
-                        let currentAngle = angle;
-                        
-                        if (neighbors.length > 8) {
-                              if (index < Math.ceil(neighbors.length / 2)) {
-                                    currentRadius = radius * 0.7; // 内側の円
-                                    currentAngle = (index / Math.ceil(neighbors.length / 2)) * 2 * Math.PI;
-                              } else {
-                                    const outerIndex = index - Math.ceil(neighbors.length / 2);
-                                    const outerCount = neighbors.length - Math.ceil(neighbors.length / 2);
-                                    currentAngle = (outerIndex / outerCount) * 2 * Math.PI;
-                              }
-                        }
-                        
-                        const x = canvasCenter.x + currentRadius * Math.cos(currentAngle);
-                        const y = canvasCenter.y + currentRadius * Math.sin(currentAngle);
-                        neighbor.position({ x: x, y: y });
-                  });
-                  
-                  // 画面中央にフォーカス（適度なズーム）
-                  setTimeout(function() {
-                        cy.animate({
-                              center: canvasCenter,
-                              zoom: 3
-                        }, {
-                              duration: 1000,
-                              easing: 'ease-in-out'
+                  // ノードを固定（位置が変わらないように）
+                  targetNode.lock();
+                  neighbors.lock();
+
+                  // 強制的な円状配置（複数回実行で確実にする）
+                  function forceCircularLayout() {
+                        console.log('強制円状配置実行中...');
+
+                        // ターゲットノードを中央に固定
+                        targetNode.position({ x: centerX, y: centerY });
+
+                        // 隣接ノードを円状に配置
+                        neighborsArray.forEach(function (neighbor, index) {
+                              const angle = (index / neighborsArray.length) * 2 * Math.PI;
+                              const x = centerX + radius * Math.cos(angle);
+                              const y = centerY + radius * Math.sin(angle);
+
+                              // 位置を強制設定
+                              neighbor.position({ x: x, y: y });
+
+                              console.log(`強制配置${index}:`, {
+                                    name: neighbor.data('name') || neighbor.data('shared_name'),
+                                    angle: (angle * 180 / Math.PI).toFixed(1) + '°',
+                                    x: x.toFixed(1),
+                                    y: y.toFixed(1)
+                              });
                         });
+
+                        // レイアウトを無効化して位置を固定
+                        cy.layout({ name: 'preset' }).run();
+                  }
+
+                  // 複数回実行して確実に円状配置を適用
+                  setTimeout(forceCircularLayout, 10);
+                  setTimeout(forceCircularLayout, 50);
+                  setTimeout(forceCircularLayout, 100);
+                  setTimeout(function () {
+                        forceCircularLayout();
+                        // 最後にビューを調整
+                        cy.fit(targetNode.union(neighbors), 50);
+                        console.log('円状配置完了');
                   }, 200);
 
                   // 隣接ノードリストを更新
                   const neighborsList = [];
-                  neighbors.forEach(function (neighbor) {
+                  neighborsArray.forEach(function (neighbor) {
                         const neighborType = getNodeType(neighbor);
                         neighborsList.push({
                               id: neighbor.id(),
@@ -754,15 +737,70 @@
                               });
                         }
                   } catch (e) {
-                        console.error('隣接ノード更新エラー:', e);
+                        console.error('スコープ更新エラー:', e);
                   }
 
-                  console.log('フォーカスモード完了');
+                  // 手動更新も実行
+                  if (typeof window.updateNeighborsPanel === 'function') {
+                        window.updateNeighborsPanel(neighborsList);
+                  }
+
+                  console.log('ハイライト完了');
             }
 
             // 直接ノード選択関数（後方互換性のため残す）
             function directSelectNode(nodeId, nodeName) {
                   highlightSelectedNode(nodeId, nodeName);
+            }
+
+            // 特定ノード検索・デバッグ関数
+            function debugSpecificNode(searchTerm) {
+                  console.log(`=== ${searchTerm}ノードデバッグ ===`);
+
+                  const cy = window.cy;
+                  if (!cy) {
+                        console.error('Cytoscapeインスタンスが見つかりません');
+                        return;
+                  }
+
+                  const foundNodes = [];
+                  cy.nodes().forEach(function (node) {
+                        const name = (node.data('name') || '').toLowerCase();
+                        const sharedName = (node.data('shared_name') || '').toLowerCase();
+
+                        if (name.includes(searchTerm.toLowerCase()) || sharedName.includes(searchTerm.toLowerCase())) {
+                              foundNodes.push({
+                                    id: node.id(),
+                                    name: node.data('name'),
+                                    sharedName: node.data('shared_name'),
+                                    P1attr: node.data('P1attr'),
+                                    P2attr: node.data('P2attr'),
+                                    type: getNodeType(node),
+                                    neighbors: node.neighborhood().nodes().length
+                              });
+                        }
+                  });
+
+                  console.log(`見つかった${searchTerm}ノード:`, foundNodes);
+
+                  if (foundNodes.length > 0) {
+                        console.log(`最初の${searchTerm}ノードをテスト選択します`);
+                        const testNode = foundNodes[0];
+                        console.log('選択ノード詳細:', testNode);
+                        highlightSelectedNode(testNode.id, testNode.name || testNode.sharedName);
+                  }
+
+                  return foundNodes;
+            }
+
+            // aortaノード専用デバッグ関数（後方互換性）
+            function debugAortaNode() {
+                  return debugSpecificNode('aorta');
+            }
+
+            // ophthalmic arteryノード専用デバッグ関数
+            function debugOphthalmicNode() {
+                  return debugSpecificNode('ophthalmic');
             }
 
             // デバッグ用テスト関数
@@ -787,33 +825,76 @@
             window.testNodeSelection = testNodeSelection;
             window.applyAnatomyColors = applyAnatomyColors;
 
+            // 背景色をデフォルトで黒に設定
+            function setDefaultBackgroundColor() {
+                  // 直接DOMを操作して背景色を設定
+                  document.body.style.backgroundColor = '#000000';
+
+                  const checkElements = setInterval(function () {
+                        const networkElement = document.getElementById('network');
+                        if (networkElement) {
+                              networkElement.style.backgroundColor = '#000000';
+                              console.log('ネットワーク要素の背景色を黒に設定しました');
+                        }
+
+                        const scope = angular.element(document.body).scope();
+                        if (scope && scope.bg) {
+                              scope.$apply(function () {
+                                    scope.bg.color = '#000000'; // 黒に設定
+                              });
+                              console.log('AngularJSスコープの背景色を黒に設定しました');
+                              clearInterval(checkElements);
+                        }
+                  }, 100);
+            }
+
             // Cytoscapeが初期化されたら色分けとレイアウトを適用
             function initializeAnatomyColors() {
                   const checkCytoscape = setInterval(function () {
                         if (window.cy && window.cy.nodes().length > 0) {
                               console.log('Cytoscape初期化完了 - 解剖学レイアウト適用中...');
-                              
+
                               // 背景クリック時の処理を追加
-                              window.cy.on('tap', function(evt) {
+                              window.cy.on('tap', function (evt) {
                                     if (evt.target === window.cy) {
-                                          // 背景がクリックされた場合、全ノードを再表示
-                                          window.cy.nodes().style({
-                                                'opacity': 1,
-                                                'display': 'element'
-                                          });
-                                          window.cy.edges().style({
-                                                'opacity': 0.4,
-                                                'display': 'element',
-                                                'width': '0.3px',
-                                                'line-color': '#F0F0F0'
-                                          });
-                                          // 基本色分けを再適用
-                                          applyAnatomyColors();
-                                          // 全体表示に戻す
-                                          window.cy.fit(window.cy.nodes(), 50);
+                                          console.log('背景クリック検出 - 通常表示に戻す');
+                                          // 背景がクリックされた場合、directClear()を呼び出し
+                                          if (typeof directClear === 'function') {
+                                                directClear();
+                                          } else {
+                                                // フォールバック: 直接処理
+                                                window.cy.nodes().style({
+                                                      'opacity': 1,
+                                                      'display': 'element'
+                                                });
+                                                window.cy.edges().style({
+                                                      'opacity': 0.4,
+                                                      'display': 'element',
+                                                      'width': '0.3px',
+                                                      'line-color': '#F0F0F0'
+                                                });
+                                                // 基本色分けを再適用
+                                                applyAnatomyColors();
+                                                // 全体表示に戻す
+                                                window.cy.fit(window.cy.nodes(), 50);
+
+                                                // AngularJSスコープもクリア
+                                                try {
+                                                      const scope = angular.element(document.body).scope();
+                                                      if (scope) {
+                                                            scope.$apply(function () {
+                                                                  scope.searchQuery = '';
+                                                                  scope.searchResults = [];
+                                                                  scope.selectedNodeNeighbors = [];
+                                                            });
+                                                      }
+                                                } catch (e) {
+                                                      console.error('背景クリック時のスコープ更新エラー:', e);
+                                                }
+                                          }
                                     }
                               });
-                              
+
                               setTimeout(function () {
                                     applyAnatomyLayout();
                               }, 1500);
@@ -966,10 +1047,10 @@
                               const angle = (index / nodes.length) * 2 * Math.PI;
                               const layer = Math.floor(index / 6) + 1; // レイヤー（内側から外側へ）
                               const radius = (triangleSize * 0.3 * layer) / Math.max(Math.floor(nodes.length / 6), 1);
-                              
+
                               x = radius * Math.cos(angle);
                               y = radius * Math.sin(angle);
-                              
+
                               // 三角形の境界内に収める
                               const maxRadius = triangleSize * 0.4;
                               if (Math.sqrt(x * x + y * y) > maxRadius) {
@@ -1049,10 +1130,219 @@
             }
 
             // 初期化開始
+            setDefaultBackgroundColor();
             initializeAnatomyColors();
+
+            // ドラッグ機能の実装
+            function makeDraggable() {
+                  const panel = document.getElementById('draggable-search-panel');
+                  if (!panel) return;
+
+                  let isDragging = false;
+                  let currentX;
+                  let currentY;
+                  let initialX;
+                  let initialY;
+                  let xOffset = 0;
+                  let yOffset = 0;
+
+                  // 初期位置を設定
+                  const rect = panel.getBoundingClientRect();
+                  xOffset = rect.left;
+                  yOffset = rect.top;
+
+                  // マウスイベント
+                  panel.addEventListener('mousedown', dragStart);
+                  document.addEventListener('mousemove', drag);
+                  document.addEventListener('mouseup', dragEnd);
+
+                  // タッチイベント（スマホ対応）
+                  panel.addEventListener('touchstart', dragStart, { passive: false });
+                  document.addEventListener('touchmove', drag, { passive: false });
+                  document.addEventListener('touchend', dragEnd);
+
+                  function dragStart(e) {
+                        // 入力フィールドやボタンをクリック/タッチした場合はドラッグしない
+                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
+                              return;
+                        }
+
+                        // タッチイベントとマウスイベントの両方に対応
+                        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                        initialX = clientX - xOffset;
+                        initialY = clientY - yOffset;
+
+                        if (e.target === panel || panel.contains(e.target)) {
+                              isDragging = true;
+                              panel.style.cursor = 'grabbing';
+
+                              // タッチイベントの場合、デフォルト動作を防ぐ
+                              if (e.touches) {
+                                    e.preventDefault();
+                              }
+                        }
+                  }
+
+                  function drag(e) {
+                        if (isDragging) {
+                              e.preventDefault();
+
+                              // タッチイベントとマウスイベントの両方に対応
+                              const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                              const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                              currentX = clientX - initialX;
+                              currentY = clientY - initialY;
+
+                              xOffset = currentX;
+                              yOffset = currentY;
+
+                              // 画面境界内に制限（スマホ対応）
+                              const maxX = window.innerWidth - panel.offsetWidth;
+                              const maxY = window.innerHeight - panel.offsetHeight;
+
+                              currentX = Math.max(0, Math.min(currentX, maxX));
+                              currentY = Math.max(0, Math.min(currentY, maxY));
+
+                              panel.style.left = currentX + 'px';
+                              panel.style.top = currentY + 'px';
+                              panel.style.position = 'fixed';
+                        }
+                  }
+
+                  function dragEnd(e) {
+                        if (isDragging) {
+                              initialX = currentX;
+                              initialY = currentY;
+                              isDragging = false;
+                              panel.style.cursor = 'move';
+                        }
+                  }
+
+                  console.log('検索パネルがドラッグ可能になりました');
+            }
+
+            // ページ読み込み後にドラッグ機能を初期化
+            document.addEventListener('DOMContentLoaded', function () {
+                  setTimeout(makeDraggable, 1000); // AngularJSの初期化を待つ
+            });
 
             // グローバル関数として公開
             window.applyAnatomyLayout = applyAnatomyLayout;
+            window.highlightSelectedNode = highlightSelectedNode;
+            window.selectNeighborNode = selectNeighborNode;
+            window.directSearch = directSearch;
+            window.directClear = directClear;
+            window.debugAortaNode = debugAortaNode;
+            window.makeDraggable = makeDraggable;
+
+            // デバッグ用: AngularJSスコープの確認
+            window.debugAngular = function () {
+                  console.log('=== AngularJS デバッグ ===');
+                  const bodyScope = angular.element(document.body).scope();
+                  const networkScope = angular.element('#network').scope();
+                  const mainScope = angular.element('[ng-controller="MainCtrl"]').scope();
+
+                  console.log('Body scope:', bodyScope);
+                  console.log('Network scope:', networkScope);
+                  console.log('MainCtrl scope:', mainScope);
+
+                  if (mainScope) {
+                        console.log('MainCtrl functions:');
+                        console.log('- selectNeighborFromList:', typeof mainScope.selectNeighborFromList);
+                        console.log('- testNeighborClick:', typeof mainScope.testNeighborClick);
+                        console.log('- selectedNodeNeighbors:', mainScope.selectedNodeNeighbors);
+                  }
+
+                  return { bodyScope, networkScope, mainScope };
+            };
+
+            // 直接neighbor選択関数（グローバル）
+            window.directSelectNeighbor = function (neighborId, neighborName, neighborIndex) {
+                  console.log('=== 直接neighbor選択 ===');
+                  console.log('受信パラメータ:');
+                  console.log('- ID:', neighborId, '(型:', typeof neighborId, ')');
+                  console.log('- Name:', neighborName, '(型:', typeof neighborName, ')');
+                  console.log('- Index:', neighborIndex, '(型:', typeof neighborIndex, ')');
+
+                  if (!neighborId) {
+                        console.error('neighborIdが無効です:', neighborId);
+                        return;
+                  }
+
+                  if (!neighborName) {
+                        console.error('neighborNameが無効です:', neighborName);
+                        return;
+                  }
+
+                  // 選択状態の視覚的更新
+                  const neighborItems = document.querySelectorAll('.neighbors-panel .list-group-item');
+                  neighborItems.forEach(function (item, index) {
+                        item.classList.remove('selected-item');
+                        if (index == neighborIndex) {
+                              item.classList.add('selected-item');
+                        }
+                  });
+
+                  console.log('neighborを新しい中心として設定:', neighborName);
+
+                  // highlightSelectedNode関数を呼び出し
+                  if (typeof window.highlightSelectedNode === 'function') {
+                        setTimeout(function () {
+                              console.log('highlightSelectedNode実行中...');
+                              window.highlightSelectedNode(neighborId, neighborName);
+                              console.log('highlightSelectedNode完了');
+                        }, 100);
+                  } else {
+                        console.error('highlightSelectedNode関数が見つかりません');
+                  }
+            };
+
+            // neighborパネルの手動更新関数
+            window.updateNeighborsPanel = function (neighborsList) {
+                  console.log('=== neighborパネル手動更新 ===');
+                  console.log('neighbors数:', neighborsList.length);
+
+                  const panel = document.querySelector('.neighbors-panel');
+                  const ul = panel.querySelector('.list-group');
+
+                  if (!ul) {
+                        console.error('neighbor list要素が見つかりません');
+                        return;
+                  }
+
+                  // 既存のneighborアイテムをクリア（ボタンは残す）
+                  const existingItems = ul.querySelectorAll('.list-group-item');
+                  existingItems.forEach(item => item.remove());
+
+                  // 新しいneighborアイテムを追加
+                  neighborsList.forEach(function (neighbor, index) {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.style.cursor = 'pointer';
+                        li.setAttribute('data-neighbor-id', neighbor.id);
+                        li.setAttribute('data-neighbor-name', neighbor.name);
+                        li.setAttribute('data-neighbor-index', index);
+
+                        li.innerHTML = `
+                        ${neighbor.name} <span class="badge ${neighbor.anatomyType || neighbor.type}">${neighbor.anatomyType || neighbor.type}</span>
+                    `;
+
+                        // クリックイベントを追加
+                        li.onclick = function () {
+                              window.directSelectNeighbor(neighbor.id, neighbor.name, index);
+                        };
+
+                        ul.appendChild(li);
+                  });
+
+                  // パネルを表示
+                  panel.style.display = neighborsList.length > 0 ? 'block' : 'none';
+
+                  console.log('neighborパネル更新完了');
+            };
       </script>
 </body>
 

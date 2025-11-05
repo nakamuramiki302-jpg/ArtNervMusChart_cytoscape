@@ -13,11 +13,34 @@ $( document ).ready(function(){
   function initializeAnatomyFeatures(cy) {
     window.anatomyApp.cy = cy;
     
-    // ノードクリック時の隣接ノード表示
+    // ノードクリック時の隣接ノード表示（フォーカスモード）
     cy.on('tap', 'node', function(evt) {
       const node = evt.target;
-      showNeighbors(node);
-      highlightNode(node);
+      const nodeId = node.id();
+      const nodeName = node.data('name') || node.data('shared_name') || '';
+      
+      console.log('=== custom.js: ノードタップ検出 ===');
+      console.log('- ID:', nodeId);
+      console.log('- Name:', nodeName);
+      console.log('- ノードの状態:', {
+        locked: node.locked(),
+        visible: node.visible(),
+        selected: node.selected()
+      });
+      
+      // イベントの伝播を確実にする
+      evt.stopPropagation();
+      
+      // index.htmlのhighlightSelectedNode関数を呼び出し（フォーカスモード）
+      if (typeof window.highlightSelectedNode === 'function') {
+        console.log('highlightSelectedNode関数を呼び出し中...');
+        window.highlightSelectedNode(nodeId, nodeName);
+      } else {
+        console.error('highlightSelectedNode関数が見つかりません');
+        // フォールバック: 従来の方法
+        showNeighbors(node);
+        highlightNode(node);
+      }
     });
     
     // 背景クリック時のハイライト解除

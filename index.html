@@ -661,92 +661,93 @@
                   
                   console.log('ターゲットノードサイズ設定:', { isMobile, targetSize, borderWidth });
 
-                  // 隣接ノードを円状に配置（改良版）
-                  // スマホでは半径を大きくして見やすくする
-                  const radius = isMobile ? 200 : 150;
-                  const neighborsArray = neighbors.toArray(); // Cytoscapeコレクションを配列に変換
+                  // 超強力な円状配置アルゴリズム
+                  const neighborsArray = neighbors.toArray();
+                  const neighborCount = neighborsArray.length;
+                  
+                  console.log('隣接ノード数:', neighborCount);
+                  
+                  if (neighborCount === 0) {
+                        console.log('隣接ノードがありません');
+                        cy.fit(targetNode, 50);
+                        return;
+                  }
 
-                  console.log('隣接ノード配列長:', neighborsArray.length);
+                  // 動的半径計算
+                  let radius = Math.max(150, neighborCount * 15);
+                  if (neighborCount > 15) radius = 250;
+                  if (neighborCount > 25) radius = 300;
 
-                  neighborsArray.forEach(function (neighbor, index) {
-                        // 隣接ノードの詳細情報をデバッグ出力
-                        const neighborData = neighbor.data();
-                        const neighborType = getNodeType(neighbor);
-                        console.log(`隣接ノード${index}:`, {
-                              name: neighborData.name || neighborData.shared_name,
-                              type: neighborType,
-                              P1attr: neighborData.P1attr,
-                              P2attr: neighborData.P2attr
-                        });
+                  console.log('計算された半径:', radius);
 
-                        // 確実に円状配置するための角度計算
-                        const angle = (index / neighborsArray.length) * 2 * Math.PI;
-                        const x = centerX + radius * Math.cos(angle);
-                        const y = centerY + radius * Math.sin(angle);
+                  // 全てのレイアウトを停止
+                  cy.nodes().unlock();
+                  cy.edges().unlock();
 
-                        console.log(`隣接ノード${index}位置:`, { angle: angle * 180 / Math.PI, x, y });
-
-                        // 位置を強制的に設定
-                        neighbor.position({ x: x, y: y });
-
-                        // 隣接ノードの元の色を保持して拡大表示
-                        const neighborColors = anatomyColors[neighborType];
+                  // 円状配置を強制実行する関数
+                  function forceCircularArrangement() {
+                        console.log('🔄 強制円状配置実行...');
                         
-                        // スマホでは隣接ノードも大きく表示
-                        const neighborSize = isMobile ? '50px' : '40px';
-                        const neighborBorderWidth = isMobile ? '5px' : '4px';
-
-                        neighbor.style({
-                              'border-width': neighborBorderWidth,
-                              'border-color': neighborColors.border,
-                              'background-color': neighborColors.background,
-                              'width': neighborSize,
-                              'height': neighborSize
-                        });
-                  });
-
-                  // ノードを固定（位置が変わらないように）
-                  targetNode.lock();
-                  neighbors.lock();
-
-                  // 強制的な円状配置（複数回実行で確実にする）
-                  function forceCircularLayout() {
-                        console.log('強制円状配置実行中...');
-
-                        // ターゲットノードを中央に固定
+                        // 1. ターゲットノードを中央に固定
                         targetNode.position({ x: centerX, y: centerY });
-
-                        // 隣接ノードを円状に配置
+                        
+                        // 2. 隣接ノードを完全に円状配置
                         neighborsArray.forEach(function (neighbor, index) {
-                              const angle = (index / neighborsArray.length) * 2 * Math.PI;
+                              // 角度計算（均等分割）
+                              const angle = (index / neighborCount) * 2 * Math.PI;
                               const x = centerX + radius * Math.cos(angle);
                               const y = centerY + radius * Math.sin(angle);
 
-                              // 位置を強制設定
+                              // 強制位置設定
                               neighbor.position({ x: x, y: y });
 
-                              console.log(`強制配置${index}:`, {
-                                    name: neighbor.data('name') || neighbor.data('shared_name'),
-                                    angle: (angle * 180 / Math.PI).toFixed(1) + '°',
-                                    x: x.toFixed(1),
-                                    y: y.toFixed(1)
+                              // スタイル設定
+                              const neighborType = getNodeType(neighbor);
+                              const neighborColors = anatomyColors[neighborType];
+                              
+                              neighbor.style({
+                                    'border-width': '4px',
+                                    'border-color': neighborColors.border,
+                                    'background-color': neighborColors.background,
+                                    'width': '40px',
+                                    'height': '40px'
                               });
+
+                              console.log(`配置${index}: ${neighbor.data('name')} - ${(angle * 180 / Math.PI).toFixed(0)}°`);
                         });
 
-                        // レイアウトを無効化して位置を固定
-                        cy.layout({ name: 'preset' }).run();
+                        // 3. 全ノードをロック
+                        targetNode.lock();
+                        neighbors.lock();
                   }
 
-                  // 複数回実行して確実に円状配置を適用
-                  setTimeout(forceCircularLayout, 10);
-                  setTimeout(forceCircularLayout, 50);
-                  setTimeout(forceCircularLayout, 100);
-                  setTimeout(function () {
-                        forceCircularLayout();
-                        // 最後にビューを調整
-                        cy.fit(targetNode.union(neighbors), 50);
-                        console.log('円状配置完了');
+                  // 段階的実行で確実に配置
+                  forceCircularArrangement(); // 即座に実行
+
+                  setTimeout(function() {
+                        forceCircularArrangement();
+                        console.log('✅ 2回目配置完了');
+                  }, 100);
+
+                  setTimeout(function() {
+                        forceCircularArrangement();
+                        console.log('✅ 3回目配置完了');
                   }, 200);
+
+                  setTimeout(function() {
+                        forceCircularArrangement();
+                        
+                        // 最終調整
+                        cy.fit(targetNode.union(neighbors), 80);
+                        console.log('✅ 最終配置完了');
+                        
+                        // デバッグ情報出力
+                        console.log('=== 最終位置確認 ===');
+                        console.log('中央ノード位置:', targetNode.position());
+                        neighborsArray.forEach(function(neighbor, index) {
+                              console.log(`隣接${index}: ${neighbor.data('name')} - 位置:`, neighbor.position());
+                        });
+                  }, 300);
 
                   // 隣接ノードリストを更新
                   const neighborsList = [];
@@ -834,6 +835,42 @@
             // ophthalmic arteryノード専用デバッグ関数
             function debugOphthalmicNode() {
                   return debugSpecificNode('ophthalmic');
+            }
+
+            // ulnar arteryノード専用デバッグ関数
+            function debugUlnarNode() {
+                  return debugSpecificNode('ulnar');
+            }
+
+            // 問題のあるノードをテストする関数（更新版）
+            function debugProblematicNodes() {
+                  console.log('=== 問題のあるノードをテスト ===');
+                  
+                  const problematicTerms = [
+                        'nerve to the obturator internus',
+                        'superior gemellus',
+                        'obturator artery',
+                        'dartos',
+                        'ilioinguinal nerve',
+                        'transversus abdominis',
+                        'internal abdominal oblique',
+                        'superficial circumflex iliac artery',
+                        'musculophrenic artery',
+                        'posterior branch',
+                        'superior mesenteric',
+                        'internal iliac',
+                        'inferior gluteal',
+                        'ulnar'
+                  ];
+                  
+                  console.log('問題ノード総数:', problematicTerms.length);
+                  
+                  problematicTerms.forEach(function(term, index) {
+                        console.log(`--- ${index + 1}/${problematicTerms.length}: ${term} ---`);
+                        setTimeout(function() {
+                              debugSpecificNode(term);
+                        }, index * 1000); // 1秒間隔でテスト
+                  });
             }
 
             // デバッグ用テスト関数
@@ -1363,7 +1400,42 @@
             window.directSearch = directSearch;
             window.directClear = directClear;
             window.debugAortaNode = debugAortaNode;
+            window.debugUlnarNode = debugUlnarNode;
+            window.debugProblematicNodes = debugProblematicNodes;
             window.makeDraggable = makeDraggable;
+
+            // 個別問題ノードテスト関数
+            function testSpecificProblematicNode(nodeName) {
+                  console.log(`=== ${nodeName} の個別テスト ===`);
+                  
+                  const cy = window.cy;
+                  if (!cy) {
+                        console.error('Cytoscapeが見つかりません');
+                        return;
+                  }
+
+                  // ノードを検索
+                  let foundNode = null;
+                  cy.nodes().forEach(function(node) {
+                        const name = (node.data('name') || '').toLowerCase();
+                        const sharedName = (node.data('shared_name') || '').toLowerCase();
+                        
+                        if (name.includes(nodeName.toLowerCase()) || sharedName.includes(nodeName.toLowerCase())) {
+                              foundNode = node;
+                              return false; // 最初に見つかったものを使用
+                        }
+                  });
+
+                  if (foundNode) {
+                        console.log('ノード発見:', foundNode.data('name'));
+                        console.log('隣接ノード数:', foundNode.neighborhood().nodes().length);
+                        highlightSelectedNode(foundNode.id(), foundNode.data('name'));
+                  } else {
+                        console.error('ノードが見つかりません:', nodeName);
+                  }
+            }
+            
+            window.testSpecificProblematicNode = testSpecificProblematicNode;
             window.toggleSearchPanel = toggleSearchPanel;
             window.testSearchSelection = testSearchSelection;
             window.fixedSelectSearchResult = fixedSelectSearchResult;

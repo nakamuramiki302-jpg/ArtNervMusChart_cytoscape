@@ -65,9 +65,17 @@
             🔍
         </div>
         
+        <!-- フローティング隣接構造ボタン（隣接パネルが非表示で隣接データがある時に表示） -->
+        <div class="floating-neighbors-btn" id="floating-neighbors-btn" onclick="toggleNeighborsPanel()" style="display: none; position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: #28a745; color: white; border: none; border-radius: 50%; cursor: pointer; z-index: 1002; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-size: 16px; align-items: center; justify-content: center;">
+            🔗
+        </div>
+        
         <!-- Neighbors Panel -->
-        <div class="neighbors-panel" ng-show="selectedNodeNeighbors.length > 0">
-            <h4>Adjacent Structures</h4>
+        <div class="neighbors-panel" id="neighbors-panel" ng-show="selectedNodeNeighbors.length > 0">
+            <div class="neighbors-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="margin: 0; font-size: 14px;">Adjacent Structures</h4>
+                <button type="button" class="close-neighbors-btn" onclick="toggleNeighborsPanel()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
+            </div>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="neighbor in selectedNodeNeighbors" ng-class="{'selected-item': neighbor.selected}" ng-click="selectNeighborFromList(neighbor.id, neighbor.name, $index)" onclick="window.directSelectNeighbor(this.getAttribute('data-neighbor-id'), this.getAttribute('data-neighbor-name'), this.getAttribute('data-neighbor-index'))" data-neighbor-id="{{neighbor.id}}" data-neighbor-name="{{neighbor.name}}" data-neighbor-index="{{$index}}" style="cursor: pointer;">
                     {{neighbor.name}} <span class="badge {{neighbor.anatomyType || neighbor.type}}">{{neighbor.anatomyType || neighbor.type}}</span>
@@ -75,25 +83,7 @@
             </ul>
         </div>
         
-        <!-- Layout Info Panel -->
-        <div class="layout-info-panel">
-            <h4>Anatomy Layout</h4>
-            <div class="layout-legend">
-                <div class="legend-item">
-                    <span class="legend-shape heart">❤️</span>
-                    <span class="legend-text">Arteries (Heart Shape)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-shape rugby">🏈</span>
-                    <span class="legend-text">Muscles (Rugby Ball)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-shape triangle">🔺</span>
-                    <span class="legend-text">Nerves (Triangle Shape)</span>
-                </div>
-            </div>
-        </div>
-        
+
         <div class="summary" ng-show="overlayState.show">
             <h3>Network:</h3>
             <select class="form-control" id="network-selector" ng-options="networkName for networkName in networkNames" ng-change="switchNetwork()" ng-model="currentNetwork"></select>
@@ -286,6 +276,10 @@
                         }, 200);
                   }
 
+                  // 保存された選択データをクリア
+                  currentSelectedNode = null;
+                  currentSelectedNodeNeighbors = [];
+
                   // AngularJSスコープをクリア
                   try {
                         const scope = angular.element(document.body).scope();
@@ -301,6 +295,9 @@
                   }
 
                   console.log('クリア完了');
+                  
+                  // フローティングボタンの状態を更新
+                  updateFloatingNeighborsButton();
             }
 
             // 検索結果選択関数
@@ -503,6 +500,36 @@
                   return result || text.substring(0, maxLength - 1) + '…';
             }
 
+            // 現在選択されているノードを記録する変数
+            let currentSelectedNode = null;
+            let currentSelectedNodeNeighbors = [];
+
+            // 隣接ノードパネルの状態を復元する関数
+            function restoreNeighborsPanel() {
+                  console.log('=== 隣接ノードパネル状態復元 ===');
+                  
+                  if (currentSelectedNodeNeighbors && currentSelectedNodeNeighbors.length > 0) {
+                        try {
+                              const scope = angular.element(document.body).scope();
+                              if (scope) {
+                                    scope.$apply(function () {
+                                          scope.selectedNodeNeighbors = currentSelectedNodeNeighbors;
+                                    });
+                                    
+                                    const neighborsPanel = document.getElementById('neighbors-panel');
+                                    if (neighborsPanel) {
+                                          neighborsPanel.style.display = 'block';
+                                          console.log('隣接ノードパネルの状態を復元しました:', currentSelectedNodeNeighbors.length, '件');
+                                    }
+                              }
+                        } catch (e) {
+                              console.error('隣接ノードパネル復元エラー:', e);
+                        }
+                  } else {
+                        console.log('復元する隣接ノードデータがありません');
+                  }
+            }
+
             // 全ノードに色を適用する関数
             function applyAnatomyColors() {
                   console.log('=== 解剖学的色分け適用 ===');
@@ -550,12 +577,12 @@
 
                         node.style({
                               'label': shortText,
-                              'font-size': '6px', // 非常に小さなフォント
+                              'font-size': '6px', // 全体表示時は小さなフォント
                               'color': '#333',
                               'text-valign': 'center',
                               'text-halign': 'center',
                               'text-wrap': 'wrap',
-                              'text-max-width': '14px', // ノード幅より少し小さく
+                              'text-max-width': '14px', // ノード幅に収まるサイズ
                               'text-opacity': 1,
                               'text-outline-width': 0.5,
                               'text-outline-color': 'white',
@@ -658,7 +685,13 @@
                         'background-color': targetColors.highlight,
                         'width': targetSize,
                         'height': targetSize,
-                        'z-index': '999'
+                        'z-index': '999',
+                        // 選択されたノードのテキストを大きく
+                        'font-size': '12px',
+                        'text-max-width': '50px',
+                        'text-outline-width': 1.5,
+                        'text-outline-color': 'white',
+                        'text-outline-opacity': 1
                   });
                   
                   console.log('ターゲットノードサイズ設定:', { isMobile, targetSize, borderWidth });
@@ -675,10 +708,10 @@
                         return;
                   }
 
-                  // 動的半径計算
-                  let radius = Math.max(150, neighborCount * 15);
-                  if (neighborCount > 15) radius = 250;
-                  if (neighborCount > 25) radius = 300;
+                  // 動的半径計算（半分のサイズ）
+                  let radius = Math.max(75, neighborCount * 8);
+                  if (neighborCount > 15) radius = 125;
+                  if (neighborCount > 25) radius = 150;
 
                   console.log('計算された半径:', radius);
 
@@ -712,7 +745,13 @@
                                     'border-color': neighborColors.border,
                                     'background-color': neighborColors.background,
                                     'width': '40px',
-                                    'height': '40px'
+                                    'height': '40px',
+                                    // 隣接ノードのテキストを適度に大きく
+                                    'font-size': '8px',
+                                    'text-max-width': '35px',
+                                    'text-outline-width': 1,
+                                    'text-outline-color': 'white',
+                                    'text-outline-opacity': 0.9
                               });
 
                               console.log(`配置${index}: ${neighbor.data('name')} - ${(angle * 180 / Math.PI).toFixed(0)}°`);
@@ -764,6 +803,10 @@
                         });
                   });
 
+                  // 現在の選択を記録
+                  currentSelectedNode = targetNode;
+                  currentSelectedNodeNeighbors = neighborsList;
+
                   // AngularJSスコープを更新
                   try {
                         const scope = angular.element(document.body).scope();
@@ -782,6 +825,11 @@
                   }
 
                   console.log('ハイライト完了');
+                  
+                  // フローティングボタンの状態を更新
+                  setTimeout(function() {
+                        updateFloatingNeighborsButton();
+                  }, 100);
             }
 
             // 直接ノード選択関数（後方互換性のため残す）
@@ -950,6 +998,10 @@
                                                 // 全体表示に戻す
                                                 window.cy.fit(window.cy.nodes(), 50);
 
+                                                // 保存された選択データをクリア
+                                                currentSelectedNode = null;
+                                                currentSelectedNodeNeighbors = [];
+
                                                 // AngularJSスコープもクリア
                                                 try {
                                                       const scope = angular.element(document.body).scope();
@@ -963,6 +1015,9 @@
                                                 } catch (e) {
                                                       console.error('背景クリック時のスコープ更新エラー:', e);
                                                 }
+                                                
+                                                // フローティングボタンの状態を更新
+                                                updateFloatingNeighborsButton();
                                           }
                                     }
                               });
@@ -1319,6 +1374,155 @@
                   }
             }
 
+            // フローティング隣接構造ボタンの表示/非表示を更新する関数
+            function updateFloatingNeighborsButton() {
+                  const neighborsPanel = document.getElementById('neighbors-panel');
+                  const floatingBtn = document.getElementById('floating-neighbors-btn');
+                  
+                  if (!floatingBtn) {
+                        console.log('フローティング隣接構造ボタンが見つかりません');
+                        return;
+                  }
+                  
+                  try {
+                        const scope = angular.element(document.body).scope();
+                        const isPanelHidden = neighborsPanel && neighborsPanel.style.display === 'none';
+                        const hasNeighborsData = (scope && scope.selectedNodeNeighbors && scope.selectedNodeNeighbors.length > 0) || 
+                                               (currentSelectedNodeNeighbors && currentSelectedNodeNeighbors.length > 0);
+                        
+                        // パネルが非表示で、隣接データがある場合にボタンを表示
+                        if (isPanelHidden && hasNeighborsData) {
+                              floatingBtn.style.display = 'flex';
+                              console.log('フローティング隣接構造ボタンを表示');
+                        } else {
+                              floatingBtn.style.display = 'none';
+                              console.log('フローティング隣接構造ボタンを非表示');
+                        }
+                  } catch (e) {
+                        console.error('フローティングボタン更新エラー:', e);
+                        floatingBtn.style.display = 'none';
+                  }
+            }
+
+            // 隣接ノードパネルの表示/非表示を切り替える関数
+            function toggleNeighborsPanel() {
+                  console.log('=== 隣接ノードパネル切り替え ===');
+                  
+                  const neighborsPanel = document.getElementById('neighbors-panel');
+                  
+                  if (!neighborsPanel) {
+                        console.error('隣接ノードパネルが見つかりません');
+                        return;
+                  }
+                  
+                  try {
+                        const scope = angular.element(document.body).scope();
+                        if (!scope) {
+                              console.error('AngularJSスコープが見つかりません');
+                              return;
+                        }
+                        
+                        // 現在の表示状態を確認
+                        const isCurrentlyHidden = neighborsPanel.style.display === 'none';
+                        console.log('現在の状態:', isCurrentlyHidden ? '非表示' : '表示');
+                        console.log('隣接ノード数:', scope.selectedNodeNeighbors ? scope.selectedNodeNeighbors.length : 0);
+                        
+                        if (isCurrentlyHidden) {
+                              // パネルを表示する場合
+                              if (scope.selectedNodeNeighbors && scope.selectedNodeNeighbors.length > 0) {
+                                    // 隣接ノードデータがある場合は表示
+                                    neighborsPanel.style.display = 'block';
+                                    console.log('隣接ノードパネルを表示しました（データあり）');
+                              } else {
+                                    // 隣接ノードデータがない場合は、保存されたデータまたは最後に選択されたノードから再取得
+                                    console.log('隣接ノードデータがないため、再取得を試みます');
+                                    
+                                    let neighborsList = [];
+                                    
+                                    // まず保存されたデータを確認
+                                    if (currentSelectedNodeNeighbors && currentSelectedNodeNeighbors.length > 0) {
+                                          console.log('保存された隣接ノードデータを使用:', currentSelectedNodeNeighbors.length, '件');
+                                          neighborsList = currentSelectedNodeNeighbors;
+                                    } else if (currentSelectedNode) {
+                                          // 保存されたノードから隣接ノードを再取得
+                                          console.log('保存されたノードから隣接ノードを再取得:', currentSelectedNode.data('name'));
+                                          
+                                          const neighbors = currentSelectedNode.neighborhood().nodes();
+                                          neighbors.forEach(function (neighbor) {
+                                                const neighborType = getNodeType(neighbor);
+                                                neighborsList.push({
+                                                      id: neighbor.id(),
+                                                      name: neighbor.data('name') || neighbor.data('shared_name'),
+                                                      type: neighbor.data('P2attr') || neighbor.data('P1attr') || 'unknown',
+                                                      anatomyType: neighborType,
+                                                      selected: false
+                                                });
+                                          });
+                                    } else {
+                                          // 最後の手段: 現在選択されているノードから取得
+                                          const cy = window.cy;
+                                          if (cy) {
+                                                const selectedNodes = cy.nodes(':selected');
+                                                if (selectedNodes.length > 0) {
+                                                      const selectedNode = selectedNodes[0];
+                                                      console.log('現在選択されたノードから隣接ノードを再取得:', selectedNode.data('name'));
+                                                      
+                                                      const neighbors = selectedNode.neighborhood().nodes();
+                                                      neighbors.forEach(function (neighbor) {
+                                                            const neighborType = getNodeType(neighbor);
+                                                            neighborsList.push({
+                                                                  id: neighbor.id(),
+                                                                  name: neighbor.data('name') || neighbor.data('shared_name'),
+                                                                  type: neighbor.data('P2attr') || neighbor.data('P1attr') || 'unknown',
+                                                                  anatomyType: neighborType,
+                                                                  selected: false
+                                                            });
+                                                      });
+                                                } else {
+                                                      console.log('選択されたノードがありません');
+                                                }
+                                          }
+                                    }
+                                    
+                                    if (neighborsList.length > 0) {
+                                          // スコープを更新
+                                          scope.$apply(function () {
+                                                scope.selectedNodeNeighbors = neighborsList;
+                                          });
+                                          
+                                          neighborsPanel.style.display = 'block';
+                                          console.log('隣接ノードパネルを表示しました:', neighborsList.length, '件');
+                                    } else {
+                                          console.log('表示する隣接ノードが見つかりませんでした');
+                                    }
+                              }
+                        } else {
+                              // パネルを非表示にする場合
+                              neighborsPanel.style.display = 'none';
+                              console.log('隣接ノードパネルを非表示にしました');
+                              
+                              // 注意: selectedNodeNeighborsはクリアしない（再表示時に使用するため）
+                        }
+                        
+                        // フローティングボタンの表示/非表示を更新
+                        updateFloatingNeighborsButton();
+                  } catch (e) {
+                        console.error('隣接ノードパネル切り替えエラー:', e);
+                        
+                        // フォールバック: 単純な表示切り替え
+                        if (neighborsPanel.style.display === 'none') {
+                              neighborsPanel.style.display = 'block';
+                              console.log('フォールバック: パネルを表示');
+                        } else {
+                              neighborsPanel.style.display = 'none';
+                              console.log('フォールバック: パネルを非表示');
+                        }
+                        
+                        // フローティングボタンの表示/非表示を更新
+                        updateFloatingNeighborsButton();
+                  }
+            }
+
             // デバッグ用：検索結果選択のテスト関数
             function testSearchSelection() {
                   console.log('=== 検索選択テスト開始 ===');
@@ -1466,6 +1670,9 @@
             window.testSpecificProblematicNode = testSpecificProblematicNode;
             window.handleSearchResultClick = handleSearchResultClick;
             window.toggleSearchPanel = toggleSearchPanel;
+            window.toggleNeighborsPanel = toggleNeighborsPanel;
+            window.restoreNeighborsPanel = restoreNeighborsPanel;
+            window.updateFloatingNeighborsButton = updateFloatingNeighborsButton;
             window.testSearchSelection = testSearchSelection;
             window.fixedSelectSearchResult = fixedSelectSearchResult;
 

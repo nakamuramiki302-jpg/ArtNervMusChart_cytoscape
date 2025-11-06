@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>解剖学学習アプリ - 開発ストーリー</title>
     <link rel="stylesheet" href="styles/introduction.css">
 </head>
+
 <body>
     <header class="hero">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1>🧠 解剖学学習アプリ</h1>
-                    <p class="subtitle">プログラミング初心者でも分かる開発ストーリー</p>
+                    <h1>🧠 Anatolink 〜解剖学学習アプリ〜</h1>
                     <div class="app-links">
                         <a href="index.html?branch=mobile-support" class="app-link mobile">
-                            📱 Mobile Support版
+                            📱 Mobile phone ver
                         </a>
                         <a href="index.html?branch=cytoscape2" class="app-link cytoscape">
-                            💻 パソコン版
+                            💻 PC ver
                         </a>
                     </div>
                 </div>
                 <div class="hero-image">
-                    <img src="images/anatomy-illustration.png" alt="人体解剖学図" class="anatomy-illustration">
-                    <div class="image-overlay">
-                        <p>筋肉、血管、神経の複雑な関係を<br>視覚的に学習できます</p>
-                    </div>
                 </div>
             </div>
+        </div>
         </div>
     </header>
 
@@ -38,20 +36,9 @@
             <div class="container">
                 <h2>🚀 アプリの機能</h2>
                 <div class="features-intro">
-                    <div class="features-description">
-                        <p>このアプリは、複雑な人体構造を直感的に理解できるよう設計されています。従来の教科書では分かりにくい構造同士の関係性を、インタラクティブな視覚化で学習できます。</p>
-                    </div>
-                    <div class="features-image">
-                        <img src="images/anatomy-illustration.png" alt="解剖学構造の詳細図" class="features-anatomy-img">
-                    </div>
+                    
                 </div>
                 <div class="features-grid">
-                    <div class="feature-card" onclick="showFeatureDemo('search')">
-                        <div class="feature-icon">🔍</div>
-                        <h3>検索機能</h3>
-                        <p>解剖学用語を日本語で検索できます。筋肉、動脈、神経などを簡単に見つけられます。</p>
-                        <div class="click-hint">クリックして実際の画面を見る</div>
-                    </div>
                     <div class="feature-card" onclick="showFeatureDemo('adjacent')">
                         <div class="feature-icon">🔗</div>
                         <h3>隣接構造表示</h3>
@@ -70,18 +57,6 @@
                         <p>スマートフォンでも快適に使用できるレスポンシブデザインを採用しています。</p>
                         <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
-                    <div class="feature-card" onclick="showFeatureDemo('circular')">
-                        <div class="feature-icon">⭕</div>
-                        <h3>円状配列</h3>
-                        <p>選択した部位を中心に、関連する構造を円状に配置して視覚的に分かりやすく表示します。</p>
-                        <div class="click-hint">クリックして実際の画面を見る</div>
-                    </div>
-                    <div class="feature-card" onclick="showFeatureDemo('drag')">
-                        <div class="feature-icon">🎯</div>
-                        <h3>ドラッグ操作</h3>
-                        <p>検索パネルをドラッグして好きな位置に移動できます。使いやすさを重視した設計です。</p>
-                        <div class="click-hint">クリックして実際の画面を見る</div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -95,14 +70,16 @@
                         <div class="timeline-marker">1</div>
                         <div class="timeline-content">
                             <h3>きっかけ</h3>
-                            <p>解剖学の学習において、複雑な構造の関係性を視覚的に理解することの難しさを感じていました。既存の教材では、個別の構造は学べても、それらの相互関係が分かりにくいという課題がありました。</p>
+                            <p>解剖学の学習において、複雑な構造の関係性を視覚的に理解することの難しさを感じていました。既存の教材では、個別の構造は学べても、それらの相互関係が分かりにくいという課題がありました。
+                            </p>
                         </div>
                     </div>
                     <div class="timeline-item">
                         <div class="timeline-marker">2</div>
                         <div class="timeline-content">
                             <h3>技術選択</h3>
-                            <p>ネットワーク図を美しく表示できるCytoscape.jsライブラリを発見。これを使って解剖学構造を視覚化することを決めました。JavaScriptとHTMLの基本的な知識から始まりました。</p>
+                            <p>ネットワーク図を美しく表示できるCytoscape.jsライブラリを発見。これを使って解剖学構造を視覚化することを決めました。JavaScriptとHTMLの基本的な知識から始まりました。
+                            </p>
                         </div>
                     </div>
                     <div class="timeline-item">
@@ -332,4 +309,5 @@
 
     <script src="scripts/introduction.js"></script>
 </body>
+
 </html>

@@ -1,8 +1,14 @@
 /* 解剖学検索アプリのスタイル - 縦一列レイアウト版 + ドラッグ機能 */
 
-/* デフォルト背景色を黒に設定 */
+/* デフォルト背景色を黒に設定 + 全画面表示 */
 #network {
     background-color: #000000 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1 !important;
 }
 
 body {
@@ -33,6 +39,23 @@ body {
 .list-group-item:active {
     background-color: #e3f2fd !important;
     transform: scale(0.98);
+}
+
+/* UI要素を非表示にしてシンプルな背景に */
+.summary {
+    display: none !important;
+}
+
+.command-bar {
+    display: none !important;
+}
+
+.home-button {
+    display: none !important;
+}
+
+.table-browser {
+    display: none !important;
 }
 
 /* スマホでのタッチ領域を拡大 */
@@ -82,7 +105,7 @@ body {
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 1001; /* ネットワーク表示の上に */
 }
 
 .search-panel .search-container {
@@ -320,7 +343,7 @@ body {
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 1001; /* ネットワーク表示の上に */
     max-height: 400px;
     overflow-y: auto;
 }

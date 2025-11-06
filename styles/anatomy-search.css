@@ -99,12 +99,12 @@ body {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 200px; /* 縦一列レイアウトに合わせて幅を縮小 */
+    width: 180px; /* さらに小さく */
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 6px; /* 角を少し小さく */
+    padding: 12px; /* パディングを小さく */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     z-index: 1001; /* ネットワーク表示の上に */
 }
 
@@ -118,23 +118,25 @@ body {
 
 .search-input {
     width: 100% !important;
-    padding: 8px 12px;
+    padding: 6px 10px; /* 小さく */
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px; /* フォントサイズを小さく */
+    height: 32px; /* 高さを指定 */
     box-sizing: border-box;
     margin-bottom: 0 !important;
 }
 
 .search-btn, .clear-btn {
-    width: 120px !important; /* 英単語3つ分の幅 */
-    padding: 8px 15px;
+    padding: 6px 12px; /* 小さく */
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    align-self: flex-start !important;
-    display: block !important;
+    font-size: 12px; /* フォントサイズを小さく */
+    height: 32px; /* 高さを統一 */
+    min-width: 60px; /* 最小幅を設定 */
+    flex: 1 !important; /* 横並び時に均等幅 */
+    box-sizing: border-box;
 }
 
 .search-btn {

@@ -39,14 +39,16 @@
         
         <!-- Search Panel -->
         <div class="search-panel" id="draggable-search-panel" style="width: 240px !important; cursor: move;">
-            <div class="search-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span style="font-weight: bold; color: #333;">Search</span>
-                <button type="button" class="close-search-btn" onclick="toggleSearchPanel()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #666; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">×</button>
+            <div class="search-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: bold; color: #333; font-size: 14px;">Search</span>
+                <button type="button" class="close-search-btn" onclick="toggleSearchPanel()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
             </div>
-            <div class="search-container" style="display: flex !important; flex-direction: column !important; gap: 10px; align-items: flex-start !important;">
+            <div class="search-container" style="display: flex !important; flex-direction: column !important; gap: 8px;">
                 <input type="text" id="search-input" ng-model="searchQuery" placeholder="search anatomy terms" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()" style="width: 100% !important; box-sizing: border-box;">
-                <button type="button" class="btn btn-primary search-btn" onclick="directSearch()" style="width: 100% !important; display: block !important; box-sizing: border-box;">Search</button>
-                <button type="button" class="btn btn-secondary clear-btn" onclick="directClear()" style="width: 100% !important; display: block !important; box-sizing: border-box;">Clear</button>
+                <div class="button-row" style="display: flex !important; gap: 8px; width: 100%;">
+                    <button type="button" class="btn btn-primary search-btn" onclick="directSearch()" style="flex: 1 !important; box-sizing: border-box;">Search</button>
+                    <button type="button" class="btn btn-secondary clear-btn" onclick="directClear()" style="flex: 1 !important; box-sizing: border-box;">Clear</button>
+                </div>
             </div>
             <div class="search-results" ng-show="searchResults.length > 0">
                 <h4>Search Results ({{searchResults.length}} items)</h4>

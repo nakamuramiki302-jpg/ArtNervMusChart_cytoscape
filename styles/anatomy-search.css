@@ -99,13 +99,13 @@ body {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 180px; /* さらに小さく */
-    background: rgba(255, 255, 255, 0.95);
+    width: 160px; /* さらに小さく */
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid #ddd;
-    border-radius: 6px; /* 角を少し小さく */
-    padding: 12px; /* パディングを小さく */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1001; /* ネットワーク表示の上に */
+    border-radius: 6px;
+    padding: 8px; /* さらに小さく */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
 }
 
 .search-panel .search-container {
@@ -280,14 +280,14 @@ body {
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 300px;
-    background: rgba(255, 255, 255, 0.95);
+    width: 250px; /* 小さく */
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1001; /* ネットワーク表示の上に */
-    max-height: 400px;
+    border-radius: 6px;
+    padding: 8px; /* 小さく */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    max-height: 300px; /* 小さく */
     overflow-y: auto;
 }
 
@@ -340,7 +340,7 @@ body {
         width: 60px !important;
         height: 60px !important;
         font-size: 20px !important;
-        top: 20px !important;
+        bottom: 20px !important;
         right: 20px !important;
     }
     
@@ -392,8 +392,8 @@ body {
     
     /* ネットワーク表示エリアの調整 */
     #network {
-        padding-top: 120px !important; /* 検索パネル分のスペース */
-        padding-bottom: 220px !important; /* 隣接パネル分のスペース */
+        padding-top: 80px !important; /* 検索パネル分のスペース（小さく） */
+        padding-bottom: 180px !important; /* 隣接パネル分のスペース（小さく） */
     }
 }
 
@@ -425,6 +425,8 @@ body {
         width: 56px !important;
         height: 56px !important;
         font-size: 18px !important;
+        bottom: 20px !important;
+        right: 20px !important;
     }
 }
 
@@ -468,6 +470,8 @@ body {
         width: 50px !important;
         height: 50px !important;
         font-size: 16px !important;
+        bottom: 20px !important;
+        right: 20px !important;
     }
 }
 

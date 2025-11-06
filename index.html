@@ -39,10 +39,7 @@
         
         <!-- Search Panel -->
         <div class="search-panel" id="draggable-search-panel" style="width: 240px !important; cursor: move;">
-            <div class="search-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: bold; color: #333; font-size: 14px;">Search</span>
-                <button type="button" class="close-search-btn" onclick="toggleSearchPanel()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
-            </div>
+            <button type="button" class="close-search-btn" onclick="toggleSearchPanel()" style="position: absolute; top: 5px; right: 5px; background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">×</button>
             <div class="search-container" style="display: flex !important; flex-direction: column !important; gap: 8px;">
                 <input type="text" id="search-input" ng-model="searchQuery" placeholder="search anatomy terms" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()" style="width: 100% !important; box-sizing: border-box;">
                 <div class="button-row" style="display: flex !important; gap: 8px; width: 100%;">
@@ -66,16 +63,13 @@
         </div>
         
         <!-- フローティング隣接構造ボタン（隣接パネルが非表示で隣接データがある時に表示） -->
-        <div class="floating-neighbors-btn" id="floating-neighbors-btn" onclick="toggleNeighborsPanel()" style="display: none; position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: #28a745; color: white; border: none; border-radius: 50%; cursor: pointer; z-index: 1002; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-size: 16px; align-items: center; justify-content: center;">
+        <div class="floating-neighbors-btn" id="floating-neighbors-btn" onclick="toggleNeighborsPanel()" style="display: none; position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: #28a745; color: white; border: none; border-radius: 50%; cursor: pointer; z-index: 1002; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-size: 16px; align-items: center; justify-content: center;">
             🔗
         </div>
         
         <!-- Neighbors Panel -->
         <div class="neighbors-panel" id="neighbors-panel" ng-show="selectedNodeNeighbors.length > 0">
-            <div class="neighbors-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h4 style="margin: 0; font-size: 14px;">Adjacent Structures</h4>
-                <button type="button" class="close-neighbors-btn" onclick="toggleNeighborsPanel()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
-            </div>
+            <button type="button" class="close-neighbors-btn" onclick="toggleNeighborsPanel()" style="position: absolute; top: 5px; right: 5px; background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">×</button>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="neighbor in selectedNodeNeighbors" ng-class="{'selected-item': neighbor.selected}" ng-click="selectNeighborFromList(neighbor.id, neighbor.name, $index)" onclick="window.directSelectNeighbor(this.getAttribute('data-neighbor-id'), this.getAttribute('data-neighbor-name'), this.getAttribute('data-neighbor-index'))" data-neighbor-id="{{neighbor.id}}" data-neighbor-name="{{neighbor.name}}" data-neighbor-index="{{$index}}" style="cursor: pointer;">
                     {{neighbor.name}} <span class="badge {{neighbor.anatomyType || neighbor.type}}">{{neighbor.anatomyType || neighbor.type}}</span>
@@ -778,8 +772,8 @@
                   setTimeout(function() {
                         forceCircularArrangement();
                         
-                        // 最終調整
-                        cy.fit(targetNode.union(neighbors), 80);
+                        // 最終調整 - パネルに隠れないように大きなパディングを設定
+                        cy.fit(targetNode.union(neighbors), 120);
                         console.log('✅ 最終配置完了');
                         
                         // デバッグ情報出力

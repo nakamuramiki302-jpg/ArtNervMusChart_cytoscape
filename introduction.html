@@ -18,7 +18,7 @@
                             📱 Mobile Support版
                         </a>
                         <a href="index.html?branch=cytoscape2" class="app-link cytoscape">
-                            🔬 Cytoscape2版
+                            💻 パソコン版
                         </a>
                     </div>
                 </div>
@@ -46,35 +46,41 @@
                     </div>
                 </div>
                 <div class="features-grid">
-                    <div class="feature-card">
+                    <div class="feature-card" onclick="showFeatureDemo('search')">
                         <div class="feature-icon">🔍</div>
                         <h3>検索機能</h3>
                         <p>解剖学用語を日本語で検索できます。筋肉、動脈、神経などを簡単に見つけられます。</p>
+                        <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card" onclick="showFeatureDemo('adjacent')">
                         <div class="feature-icon">🔗</div>
                         <h3>隣接構造表示</h3>
                         <p>選択した部位に隣接する構造を自動的に表示。関連する部位を一目で理解できます。</p>
+                        <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card" onclick="showFeatureDemo('colors')">
                         <div class="feature-icon">🎨</div>
                         <h3>色分け表示</h3>
                         <p>筋肉はピンク、動脈は赤、神経は緑など、色盲の方にも配慮した色分けで表示します。</p>
+                        <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card" onclick="showFeatureDemo('mobile')">
                         <div class="feature-icon">📱</div>
                         <h3>モバイル対応</h3>
                         <p>スマートフォンでも快適に使用できるレスポンシブデザインを採用しています。</p>
+                        <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card" onclick="showFeatureDemo('circular')">
                         <div class="feature-icon">⭕</div>
                         <h3>円状配列</h3>
                         <p>選択した部位を中心に、関連する構造を円状に配置して視覚的に分かりやすく表示します。</p>
+                        <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card" onclick="showFeatureDemo('drag')">
                         <div class="feature-icon">🎯</div>
                         <h3>ドラッグ操作</h3>
                         <p>検索パネルをドラッグして好きな位置に移動できます。使いやすさを重視した設計です。</p>
+                        <div class="click-hint">クリックして実際の画面を見る</div>
                     </div>
                 </div>
             </div>
@@ -302,6 +308,20 @@
             </div>
         </section>
     </main>
+
+    <!-- 機能デモ用モーダル -->
+    <div id="feature-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">機能デモ</h3>
+                <span class="close" onclick="closeFeatureDemo()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img id="modal-image" src="" alt="機能デモ画像" class="demo-image">
+                <p id="modal-description">機能の詳細説明がここに表示されます。</p>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="container">

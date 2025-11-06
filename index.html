@@ -51,7 +51,7 @@
             <div class="search-results" ng-show="searchResults.length > 0">
                 <h4>Search Results ({{searchResults.length}} items)</h4>
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="result in searchResults" ng-class="{'selected-item': result.selected}" onclick="fixedSelectSearchResult(this.getAttribute('data-result-id'), this.getAttribute('data-result-name'), this.getAttribute('data-result-index'))" data-result-id="{{result.id}}" data-result-name="{{result.name}}" data-result-index="{{$index}}">
+                    <li class="list-group-item" ng-repeat="result in searchResults" ng-class="{'selected-item': result.selected}" onclick="handleSearchResultClick(this)" ontouchend="handleSearchResultClick(this)" data-result-id="{{result.id}}" data-result-name="{{result.name}}" data-result-index="{{$index}}" style="cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); user-select: none;">
                         {{result.name}} <span class="badge {{result.anatomyType || result.type}}">{{result.anatomyType || result.type}}</span>
                     </li>
                 </ul>
@@ -1341,15 +1341,39 @@
                   }
             }
 
-            // 検索結果選択の問題を修正する関数
-            function fixedSelectSearchResult(resultId, resultName, resultIndex) {
-                  console.log('=== 修正版検索結果選択 ===');
-                  console.log('受信パラメータ:', { resultId, resultName, resultIndex });
-
-                  if (!resultId || !resultName) {
-                        console.error('無効なパラメータ:', { resultId, resultName, resultIndex });
+            // スマホ対応の検索結果クリック処理
+            function handleSearchResultClick(element) {
+                  console.log('=== スマホ対応クリック処理 ===');
+                  
+                  // タッチイベントの重複を防ぐ
+                  if (element.dataset.clicking) {
+                        console.log('重複クリック防止');
                         return;
                   }
+                  
+                  element.dataset.clicking = 'true';
+                  setTimeout(() => {
+                        delete element.dataset.clicking;
+                  }, 1000);
+
+                  // データ属性から情報を取得
+                  const resultId = element.getAttribute('data-result-id');
+                  const resultName = element.getAttribute('data-result-name');
+                  const resultIndex = element.getAttribute('data-result-index');
+
+                  console.log('クリック要素:', element);
+                  console.log('取得データ:', { resultId, resultName, resultIndex });
+
+                  if (!resultId || !resultName) {
+                        console.error('無効なデータ:', { resultId, resultName, resultIndex });
+                        return;
+                  }
+
+                  // 視覚的フィードバック
+                  element.style.backgroundColor = '#e3f2fd';
+                  setTimeout(() => {
+                        element.style.backgroundColor = '';
+                  }, 200);
 
                   // Cytoscapeインスタンスの確認
                   const cy = window.cy;
@@ -1365,32 +1389,34 @@
                         return;
                   }
 
-                  console.log('ノード確認OK:', targetNode.data());
+                  console.log('✅ ノード確認OK:', targetNode.data());
 
                   // 検索結果の選択状態を更新
                   try {
-                        const scope = angular.element(document.body).scope();
-                        if (scope && scope.searchResults) {
-                              scope.$apply(function () {
-                                    scope.searchResults.forEach(function (item) {
-                                          item.selected = false;
-                                    });
-                                    const index = parseInt(resultIndex);
-                                    if (scope.searchResults[index]) {
-                                          scope.searchResults[index].selected = true;
-                                    }
-                              });
-                              console.log('検索結果選択状態更新完了');
-                        }
+                        const allItems = document.querySelectorAll('.list-group-item');
+                        allItems.forEach(item => item.classList.remove('selected-item'));
+                        element.classList.add('selected-item');
+                        console.log('✅ 選択状態更新完了');
                   } catch (e) {
-                        console.error('検索結果選択状態更新エラー:', e);
+                        console.error('❌ 選択状態更新エラー:', e);
                   }
 
-                  // ノードをハイライト（強制実行）
+                  // ノードをハイライト
+                  console.log('🔄 ノードハイライト開始...');
+                  highlightSelectedNode(resultId, resultName);
+            }
+
+            // 検索結果選択の問題を修正する関数（後方互換性）
+            function fixedSelectSearchResult(resultId, resultName, resultIndex) {
+                  console.log('=== 後方互換性関数 ===');
+                  
+                  if (!resultId || !resultName) {
+                        console.error('無効なパラメータ:', { resultId, resultName, resultIndex });
+                        return;
+                  }
+
                   console.log('highlightSelectedNode実行中...');
-                  setTimeout(function() {
-                        highlightSelectedNode(resultId, resultName);
-                  }, 100);
+                  highlightSelectedNode(resultId, resultName);
             }
 
             // グローバル関数として公開
@@ -1436,6 +1462,7 @@
             }
             
             window.testSpecificProblematicNode = testSpecificProblematicNode;
+            window.handleSearchResultClick = handleSearchResultClick;
             window.toggleSearchPanel = toggleSearchPanel;
             window.testSearchSelection = testSearchSelection;
             window.fixedSelectSearchResult = fixedSelectSearchResult;

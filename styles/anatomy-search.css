@@ -18,6 +18,38 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+/* スマホ対応のタッチ操作改善 */
+.list-group-item {
+    /* タッチ操作を改善 */
+    -webkit-tap-highlight-color: rgba(33, 150, 243, 0.3);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    
+    /* タッチ時の視覚的フィードバック */
+    transition: background-color 0.15s ease;
+}
+
+.list-group-item:active {
+    background-color: #e3f2fd !important;
+    transform: scale(0.98);
+}
+
+/* スマホでのタッチ領域を拡大 */
+@media (max-width: 768px) {
+    .list-group-item {
+        min-height: 48px !important; /* 最小タッチ領域 */
+        padding: 12px 15px !important;
+        font-size: 16px !important; /* iOS Safariのズーム防止 */
+        line-height: 1.4 !important;
+    }
+    
+    .badge {
+        font-size: 12px !important;
+        padding: 4px 8px !important;
+    }
+}
+
 /* ドラッグ可能なパネル用のスタイル */
 #draggable-search-panel {
     user-select: none;

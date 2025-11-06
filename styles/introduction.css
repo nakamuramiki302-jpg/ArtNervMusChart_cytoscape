@@ -25,6 +25,57 @@ body {
     color: white;
     padding: 80px 0;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-text {
+    flex: 1;
+    text-align: left;
+}
+
+.hero-image {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.anatomy-illustration {
+    max-width: 100%;
+    height: auto;
+    max-height: 500px;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.anatomy-illustration:hover {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .hero h1 {
@@ -89,6 +140,46 @@ body {
     margin-bottom: 60px;
     color: #2c3e50;
     font-weight: 700;
+}
+
+/* 機能紹介 */
+.features-intro {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 60px;
+    padding: 40px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.features-description {
+    flex: 2;
+}
+
+.features-description p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #666;
+}
+
+.features-image {
+    flex: 1;
+    text-align: center;
+}
+
+.features-anatomy-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 300px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.features-anatomy-img:hover {
+    transform: scale(1.02);
 }
 
 /* 機能グリッド */
@@ -344,6 +435,16 @@ footer p {
 
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        gap: 40px;
+        text-align: center;
+    }
+    
+    .hero-text {
+        text-align: center;
+    }
+    
     .hero h1 {
         font-size: 2.5rem;
     }
@@ -355,6 +456,25 @@ footer p {
     .app-links {
         flex-direction: column;
         align-items: center;
+    }
+    
+    .anatomy-illustration {
+        max-height: 350px;
+    }
+    
+    .image-overlay {
+        position: static;
+        transform: none;
+        margin-top: 20px;
+    }
+    
+    .features-intro {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .features-anatomy-img {
+        max-height: 250px;
     }
     
     .section h2 {
@@ -427,6 +547,34 @@ footer p {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.anatomy-illustration {
+    animation: fadeInRight 1s ease-out 0.5s both;
+}
+
+.features-anatomy-img {
+    animation: pulse 3s ease-in-out infinite;
 }
 
 .feature-card,

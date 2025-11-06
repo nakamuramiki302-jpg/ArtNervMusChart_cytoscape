@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解剖学学習アプリ - 開発ストーリー</title>
+    <link rel="stylesheet" href="styles/introduction.css">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <h1>🧠 解剖学学習アプリ</h1>
+            <p class="subtitle">プログラミング初心者でも分かる開発ストーリー</p>
+            <div class="app-links">
+                <a href="index.html?branch=mobile-support" class="app-link mobile">
+                    📱 Mobile Support版
+                </a>
+                <a href="index.html?branch=cytoscape2" class="app-link cytoscape">
+                    🔬 Cytoscape2版
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- アプリ機能の説明 -->
+        <section class="section" id="features">
+            <div class="container">
+                <h2>🚀 アプリの機能</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>検索機能</h3>
+                        <p>解剖学用語を日本語で検索できます。筋肉、動脈、神経などを簡単に見つけられます。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <h3>隣接構造表示</h3>
+                        <p>選択した部位に隣接する構造を自動的に表示。関連する部位を一目で理解できます。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>色分け表示</h3>
+                        <p>筋肉はピンク、動脈は赤、神経は緑など、色盲の方にも配慮した色分けで表示します。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>モバイル対応</h3>
+                        <p>スマートフォンでも快適に使用できるレスポンシブデザインを採用しています。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭕</div>
+                        <h3>円状配列</h3>
+                        <p>選択した部位を中心に、関連する構造を円状に配置して視覚的に分かりやすく表示します。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>ドラッグ操作</h3>
+                        <p>検索パネルをドラッグして好きな位置に移動できます。使いやすさを重視した設計です。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 開発経緯 -->
+        <section class="section bg-light" id="story">
+            <div class="container">
+                <h2>📖 開発ストーリー</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <h3>きっかけ</h3>
+                            <p>解剖学の学習において、複雑な構造の関係性を視覚的に理解することの難しさを感じていました。既存の教材では、個別の構造は学べても、それらの相互関係が分かりにくいという課題がありました。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <h3>技術選択</h3>
+                            <p>ネットワーク図を美しく表示できるCytoscape.jsライブラリを発見。これを使って解剖学構造を視覚化することを決めました。JavaScriptとHTMLの基本的な知識から始まりました。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <h3>初期開発</h3>
+                            <p>最初は基本的な検索機能から始めました。日本語での検索、英語への翻訳機能、そして検索結果の表示という基本的な機能を実装しました。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <h3>機能拡張</h3>
+                            <p>ユーザビリティを向上させるため、隣接構造の表示、色分け機能、円状配列表示などを段階的に追加していきました。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">5</div>
+                        <div class="timeline-content">
+                            <h3>モバイル対応</h3>
+                            <p>スマートフォンでの使用を想定し、タッチ操作対応、レスポンシブデザイン、フローティングボタンなどのモバイル専用機能を実装しました。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技術解説 -->
+        <section class="section" id="tech">
+            <div class="container">
+                <h2>🛠️ 使用技術の解説</h2>
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <div class="tech-icon">🤖</div>
+                        <h3>Kiro AI</h3>
+                        <p><strong>役割：</strong> AIプログラミングアシスタント</p>
+                        <p><strong>できること：</strong></p>
+                        <ul>
+                            <li>コードの自動生成と修正</li>
+                            <li>バグの発見と解決</li>
+                            <li>機能追加の提案と実装</li>
+                            <li>コードの最適化</li>
+                        </ul>
+                        <p><strong>初心者への説明：</strong> プログラミングの先生のような存在。「こんな機能が欲しい」と言うと、コードを書いてくれます。</p>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">📚</div>
+                        <h3>GitHub</h3>
+                        <p><strong>役割：</strong> コード管理・バージョン管理</p>
+                        <p><strong>できること：</strong></p>
+                        <ul>
+                            <li>コードの履歴を保存</li>
+                            <li>複数のバージョンを管理</li>
+                            <li>チームでの共同開発</li>
+                            <li>バックアップとして機能</li>
+                        </ul>
+                        <p><strong>初心者への説明：</strong> コードの「図書館」のような場所。作ったプログラムを安全に保管し、いつでも過去の状態に戻せます。</p>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">☁️</div>
+                        <h3>AWS (Amazon Web Services)</h3>
+                        <p><strong>役割：</strong> ウェブサイトの公開・ホスティング</p>
+                        <p><strong>できること：</strong></p>
+                        <ul>
+                            <li>ウェブサイトを世界中に公開</li>
+                            <li>高速で安定したサーバー提供</li>
+                            <li>自動的なスケーリング</li>
+                            <li>セキュリティ対策</li>
+                        </ul>
+                        <p><strong>初心者への説明：</strong> インターネット上の「土地」を借りる場所。ここにウェブサイトを置くことで、世界中の人がアクセスできます。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- よく使われたコード -->
+        <section class="section bg-light" id="code">
+            <div class="container">
+                <h2>💻 よく使われたコード例</h2>
+                <div class="code-examples">
+                    <div class="code-example">
+                        <h3>1. 検索機能の実装</h3>
+                        <p>ユーザーが入力した検索語を使って、解剖学用語を検索する機能です。</p>
+                        <pre><code>function directSearch() {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput.value;
+    
+    // 検索結果を格納する配列
+    const results = [];
+    
+    // 全てのノードを検索
+    cy.nodes().forEach(function (node) {
+        const name = node.data('name').toLowerCase();
+        if (name.includes(query.toLowerCase())) {
+            results.push({
+                id: node.id(),
+                name: node.data('name'),
+                type: node.data('type')
+            });
+        }
+    });
+    
+    // 検索結果を表示
+    updateSearchResults(results);
+}</code></pre>
+                        <p><strong>解説：</strong> この関数は、入力された検索語と一致する解剖学用語を見つけて、結果を表示します。</p>
+                    </div>
+
+                    <div class="code-example">
+                        <h3>2. 円状配列の実装</h3>
+                        <p>選択されたノードの周りに、関連するノードを円状に配置する機能です。</p>
+                        <pre><code>function arrangeInCircle(centerNode, neighbors) {
+    const centerX = cy.width() / 2;
+    const centerY = cy.height() / 2;
+    const radius = 150;
+    
+    // 中心ノードを配置
+    centerNode.position({ x: centerX, y: centerY });
+    
+    // 隣接ノードを円状に配置
+    neighbors.forEach(function (neighbor, index) {
+        const angle = (index / neighbors.length) * 2 * Math.PI;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        
+        neighbor.position({ x: x, y: y });
+    });
+}</code></pre>
+                        <p><strong>解説：</strong> 数学の三角関数を使って、ノードを美しい円状に配置します。</p>
+                    </div>
+
+                    <div class="code-example">
+                        <h3>3. 色分け機能</h3>
+                        <p>解剖学的な種類に応じて、ノードに異なる色を適用する機能です。</p>
+                        <pre><code>function applyAnatomyColors() {
+    const anatomyColors = {
+        muscle: { background: '#F8BBD9', border: '#E91E63' },
+        artery: { background: '#FFCDD2', border: '#D32F2F' },
+        nerve: { background: '#C8E6C9', border: '#388E3C' }
+    };
+    
+    cy.nodes().forEach(function (node) {
+        const nodeType = getNodeType(node);
+        const colors = anatomyColors[nodeType];
+        
+        node.style({
+            'background-color': colors.background,
+            'border-color': colors.border,
+            'border-width': '2px'
+        });
+    });
+}</code></pre>
+                        <p><strong>解説：</strong> 筋肉はピンク、動脈は赤、神経は緑など、種類に応じて色を変えることで、視覚的に分かりやすくします。</p>
+                    </div>
+
+                    <div class="code-example">
+                        <h3>4. モバイル対応</h3>
+                        <p>スマートフォンでのタッチ操作に対応する機能です。</p>
+                        <pre><code>function handleSearchResultClick(element) {
+    // マウスクリックとタッチの両方に対応
+    const resultId = element.getAttribute('data-result-id');
+    const resultName = element.getAttribute('data-result-name');
+    
+    // タッチ時の視覚的フィードバック
+    element.style.backgroundColor = '#e3f2fd';
+    
+    // 選択されたノードをハイライト
+    highlightSelectedNode(resultId, resultName);
+    
+    // タッチハイライトを解除
+    setTimeout(() => {
+        element.style.backgroundColor = '';
+    }, 200);
+}</code></pre>
+                        <p><strong>解説：</strong> スマートフォンでタッチした時に、視覚的なフィードバックを提供し、使いやすさを向上させます。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学習のポイント -->
+        <section class="section" id="learning">
+            <div class="container">
+                <h2>📚 プログラミング学習のポイント</h2>
+                <div class="learning-grid">
+                    <div class="learning-card">
+                        <h3>🎯 問題解決思考</h3>
+                        <p>「こんな機能があったらいいな」という課題から始まり、それを実現するための方法を考える。プログラミングは問題解決のツールです。</p>
+                    </div>
+                    <div class="learning-card">
+                        <h3>🔄 反復改善</h3>
+                        <p>最初は簡単な機能から始めて、少しずつ改善していく。完璧を目指さず、動くものを作ってから改良することが大切です。</p>
+                    </div>
+                    <div class="learning-card">
+                        <h3>🤝 AIとの協働</h3>
+                        <p>KiroのようなAIアシスタントを活用することで、初心者でも高度な機能を実装できます。AIに頼りながら学習することも有効な方法です。</p>
+                    </div>
+                    <div class="learning-card">
+                        <h3>📖 継続学習</h3>
+                        <p>技術は常に進歩しています。新しいライブラリや手法を学び続けることで、より良いアプリケーションを作ることができます。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 解剖学学習アプリ開発プロジェクト</p>
+            <p>Powered by Kiro AI, GitHub, and AWS</p>
+        </div>
+    </footer>
+
+    <script src="scripts/introduction.js"></script>
+</body>
+</html>

@@ -165,6 +165,24 @@ function translateJapaneseToEnglish(japaneseText) {
         }
     }
     
+    // anatomyTranslations辞書を使って単語ベースの翻訳を試みる
+    if (typeof anatomyTranslations !== 'undefined') {
+        let translatedParts = [];
+        let hasTranslation = false;
+        
+        // 日本語の各文字/単語を英語に変換
+        for (const [jp, en] of Object.entries(anatomyTranslations)) {
+            if (trimmed.includes(jp)) {
+                // 日本語が含まれている場合、英語に置き換え
+                const replaced = trimmed.replace(new RegExp(jp, 'g'), en);
+                if (replaced !== trimmed) {
+                    console.log(`日本語→英語翻訳: ${trimmed} → ${replaced}`);
+                    return replaced;
+                }
+            }
+        }
+    }
+    
     // 翻訳が見つからない場合は元のテキストを返す
     return japaneseText;
 }
@@ -179,7 +197,21 @@ function searchWithTranslation(searchTerm) {
         // 日本語が含まれている場合、英語に翻訳
         const englishTerm = translateJapaneseToEnglish(searchTerm);
         console.log('日本語検索:', searchTerm, '→', englishTerm);
-        return [searchTerm.toLowerCase(), englishTerm.toLowerCase()];
+        
+        const searchTerms = [searchTerm.toLowerCase(), englishTerm.toLowerCase()];
+        
+        // anatomyTranslations辞書から関連する英語単語も追加
+        if (typeof anatomyTranslations !== 'undefined') {
+            for (const [jp, en] of Object.entries(anatomyTranslations)) {
+                if (searchTerm.includes(jp)) {
+                    searchTerms.push(en.toLowerCase());
+                    console.log('  追加検索語:', en);
+                }
+            }
+        }
+        
+        // 重複を除去
+        return [...new Set(searchTerms)];
     } else {
         // 英語の場合はそのまま
         return [searchTerm.toLowerCase()];

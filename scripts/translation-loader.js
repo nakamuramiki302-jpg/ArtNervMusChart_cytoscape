@@ -1,5 +1,5 @@
 // 翻訳データローダー
-// all_body_muscles.jsonから翻訳マッピングを生成
+// muscleTranslationsはdata/translations.jsから読み込まれます
 
 var translationMap = {
     enToJp: {},  // 英語 → 日本語
@@ -8,70 +8,51 @@ var translationMap = {
 
 var translationDataLoaded = false;
 
-// 翻訳データを読み込む関数
+// 翻訳データを初期化する関数
 function loadTranslationData() {
     console.log('=== 翻訳データ読み込み開始 ===');
     
-    fetch('data/translations.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('翻訳データの読み込みに失敗しました');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('翻訳JSONデータ取得成功');
-            
-            // JSONデータから翻訳マッピングを構築
-            let entryCount = 0;
-            
-            // 各カテゴリーを処理
-            for (const category in data) {
-                if (Array.isArray(data[category])) {
-                    data[category].forEach(item => {
-                        if (item.name_en && item.name_jp) {
-                            // 英語名を正規化（小文字化）
-                            const enName = item.name_en.toLowerCase().trim();
-                            const jpName = item.name_jp.trim();
-                            
-                            // 双方向マッピングを作成
-                            translationMap.enToJp[enName] = jpName;
-                            translationMap.jpToEn[jpName] = item.name_en; // 元の大文字小文字を保持
-                            
-                            entryCount++;
-                        }
-                    });
-                }
-            }
-            
-            translationDataLoaded = true;
-            console.log('翻訳マッピング構築完了:', entryCount, '件');
-            console.log('英語→日本語エントリー数:', Object.keys(translationMap.enToJp).length);
-            console.log('日本語→英語エントリー数:', Object.keys(translationMap.jpToEn).length);
-            
-            // サンプル表示（より詳細に）
-            const sampleKeys = Object.keys(translationMap.enToJp).slice(0, 10);
-            console.log('サンプル翻訳:');
-            sampleKeys.forEach(key => {
-                console.log(`  ${key} → ${translationMap.enToJp[key]}`);
-            });
-            
-            // 特定のキーをテスト
-            console.log('特定キーテスト:');
-            console.log('  trapezius:', translationMap.enToJp['trapezius']);
-            console.log('  masseter:', translationMap.enToJp['masseter']);
-            console.log('  brain:', translationMap.enToJp['brain']);
-            
-            // 翻訳データ読み込み完了後、Cytoscapeのノードラベルを更新
-            // 複数回試行して確実に適用
-            updateAllNodeLabels();
-            setTimeout(updateAllNodeLabels, 500);
-            setTimeout(updateAllNodeLabels, 1000);
-            setTimeout(updateAllNodeLabels, 2000);
-        })
-        .catch(error => {
-            console.error('翻訳データ読み込みエラー:', error);
-        });
+    // muscleTranslationsが読み込まれているかチェック
+    if (typeof muscleTranslations === 'undefined') {
+        console.error('muscleTranslations が見つかりません。data/translations.js が読み込まれていることを確認してください。');
+        return;
+    }
+    
+    console.log('muscleTranslations 読み込み成功');
+    
+    // translationMapに変換
+    let entryCount = 0;
+    for (const enName in muscleTranslations) {
+        const jpName = muscleTranslations[enName];
+        translationMap.enToJp[enName] = jpName;
+        translationMap.jpToEn[jpName] = enName;
+        entryCount++;
+    }
+    
+    translationDataLoaded = true;
+    console.log('翻訳マッピング構築完了:', entryCount, '件');
+    console.log('英語→日本語エントリー数:', Object.keys(translationMap.enToJp).length);
+    console.log('日本語→英語エントリー数:', Object.keys(translationMap.jpToEn).length);
+    
+    // サンプル表示（より詳細に）
+    const sampleKeys = Object.keys(translationMap.enToJp).slice(0, 10);
+    console.log('サンプル翻訳:');
+    sampleKeys.forEach(key => {
+        console.log(`  ${key} → ${translationMap.enToJp[key]}`);
+    });
+    
+    // 特定のキーをテスト
+    console.log('特定キーテスト:');
+    console.log('  trapezius:', translationMap.enToJp['trapezius']);
+    console.log('  masseter:', translationMap.enToJp['masseter']);
+    console.log('  supraspinatus:', translationMap.enToJp['supraspinatus']);
+    
+    // 翻訳データ読み込み完了後、Cytoscapeのノードラベルを更新
+    // 複数回試行して確実に適用
+    updateAllNodeLabels();
+    setTimeout(updateAllNodeLabels, 500);
+    setTimeout(updateAllNodeLabels, 1000);
+    setTimeout(updateAllNodeLabels, 2000);
 }
 
 // 英語→日本語翻訳

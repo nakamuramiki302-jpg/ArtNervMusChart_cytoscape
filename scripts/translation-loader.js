@@ -63,7 +63,11 @@ function loadTranslationData() {
             console.log('  brain:', translationMap.enToJp['brain']);
             
             // 翻訳データ読み込み完了後、Cytoscapeのノードラベルを更新
+            // 複数回試行して確実に適用
             updateAllNodeLabels();
+            setTimeout(updateAllNodeLabels, 500);
+            setTimeout(updateAllNodeLabels, 1000);
+            setTimeout(updateAllNodeLabels, 2000);
         })
         .catch(error => {
             console.error('翻訳データ読み込みエラー:', error);
@@ -173,6 +177,7 @@ function updateAllNodeLabels() {
             console.log('Cytoscape準備完了、ノード数:', window.cy.nodes().length);
             
             // 全ノードのラベルを更新
+            let updatedCount = 0;
             window.cy.nodes().forEach(function(node) {
                 const originalText = node.data('name') || node.data('shared_name') || '';
                 const japaneseText = translateEnglishToJapanese(originalText);
@@ -180,13 +185,24 @@ function updateAllNodeLabels() {
                 if (japaneseText !== originalText) {
                     // 日本語と英語の両方を表示
                     const displayText = japaneseText + '\n' + originalText;
-                    const shortText = truncateText(displayText, 20);
-                    node.style('label', shortText);
-                    console.log('ラベル更新:', originalText, '→', japaneseText);
+                    const shortText = truncateText(displayText, 30);
+                    
+                    // ノードのスタイルを更新
+                    node.style({
+                        'label': shortText,
+                        'font-size': '5px',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '25px'
+                    });
+                    
+                    updatedCount++;
+                    if (updatedCount <= 5) {
+                        console.log('ラベル更新:', originalText, '→', displayText);
+                    }
                 }
             });
             
-            console.log('✅ 全ノードラベル更新完了');
+            console.log('✅ 全ノードラベル更新完了:', updatedCount, '件のノードを更新しました');
         }
     }, 100);
     

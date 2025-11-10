@@ -57,6 +57,27 @@ $( document ).ready(function(){
         clearNeighbors();
       }
     });
+    
+    // ノードダブルクリックでGoogle検索
+    cy.on('dbltap', 'node', function(evt) {
+      const node = evt.target;
+      
+      // nodeが有効かチェック
+      if (!node || typeof node.id !== 'function') {
+        console.warn('custom.js: 無効なノードがダブルクリックされました');
+        return;
+      }
+      
+      const nodeName = node.data('name') || node.data('shared_name') || '';
+      
+      if (nodeName) {
+        console.log('🔍 Google検索:', nodeName);
+        
+        // Google検索URLを開く（新しいタブで）
+        const searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(nodeName + ' anatomy');
+        window.open(searchUrl, '_blank');
+      }
+    });
   }
   
   // ノードの検索機能

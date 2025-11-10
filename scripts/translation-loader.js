@@ -53,6 +53,14 @@ function loadTranslationData() {
     setTimeout(updateAllNodeLabels, 500);
     setTimeout(updateAllNodeLabels, 1000);
     setTimeout(updateAllNodeLabels, 2000);
+    
+    // applyAnatomyColors()も再実行して、翻訳付きで色分けを適用
+    setTimeout(function() {
+        if (typeof applyAnatomyColors === 'function') {
+            console.log('翻訳データ読み込み後にapplyAnatomyColors()を再実行');
+            applyAnatomyColors();
+        }
+    }, 2500);
 }
 
 // 英語→日本語翻訳

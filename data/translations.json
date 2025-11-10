@@ -1,0 +1,436 @@
+{
+    "頭部・顔面の筋肉 (Head and Facial Muscles)": [
+        {
+            "name_jp": "前頭筋",
+            "name_en": "Frontalis",
+            "origin": "Galea aponeurotica",
+            "insertion": "Skin of the eyebrow",
+            "innervation": "Facial nerve (VII) - Temporal branch",
+            "blood_supply": "Supraorbital and supratrochlear arteries"
+        },
+        {
+            "name_jp": "後頭筋",
+            "name_en": "Occipitalis",
+            "origin": "Superior nuchal line",
+            "insertion": "Galea aponeurotica",
+            "innervation": "Facial nerve (VII) - Posterior auricular branch",
+            "blood_supply": "Occipital artery"
+        },
+        {
+            "name_jp": "眼輪筋",
+            "name_en": "Orbicularis oculi",
+            "origin": "Medial orbital margin, lacrimal bone",
+            "insertion": "Skin around the orbit",
+            "innervation": "Facial nerve (VII)",
+            "blood_supply": "Facial and superficial temporal arteries"
+        },
+        {
+            "name_jp": "口輪筋",
+            "name_en": "Orbicularis oris",
+            "origin": "Maxilla and mandible",
+            "insertion": "Skin around the lips",
+            "innervation": "Facial nerve (VII)",
+            "blood_supply": "Facial artery"
+        },
+        {
+            "name_jp": "咬筋",
+            "name_en": "Masseter",
+            "origin": "Zygomatic arch",
+            "insertion": "Angle and ramus of mandible",
+            "innervation": "Mandibular nerve (V3)",
+            "blood_supply": "Masseteric artery"
+        },
+        {
+            "name_jp": "側頭筋",
+            "name_en": "Temporalis",
+            "origin": "Temporal fossa",
+            "insertion": "Coronoid process of mandible",
+            "innervation": "Mandibular nerve (V3)",
+            "blood_supply": "Deep temporal arteries"
+        },
+        {
+            "name_jp": "頬筋",
+            "name_en": "Buccinator",
+            "origin": "Alveolar processes of maxilla and mandible",
+            "insertion": "Orbicularis oris",
+            "innervation": "Facial nerve (VII)",
+            "blood_supply": "Facial artery"
+        }
+    ],
+    "頸部の筋肉 (Neck Muscles)": [
+        {
+            "name_jp": "胸鎖乳突筋",
+            "name_en": "Sternocleidomastoid",
+            "origin": "Manubrium of sternum and medial portion of clavicle",
+            "insertion": "Mastoid process of temporal bone and superior nuchal line",
+            "innervation": "Accessory nerve (XI), cervical plexus (C2-C3)",
+            "blood_supply": "Occipital artery, superior thyroid artery"
+        },
+        {
+            "name_jp": "僧帽筋",
+            "name_en": "Trapezius",
+            "origin": "External occipital protuberance, nuchal ligament, spinous processes of C7-T12",
+            "insertion": "Lateral third of clavicle, acromion, and spine of scapula",
+            "innervation": "Accessory nerve (XI), cervical plexus (C3-C4)",
+            "blood_supply": "Transverse cervical artery"
+        },
+        {
+            "name_jp": "舌骨上筋群",
+            "name_en": "Suprahyoid muscles",
+            "origin": "Mandible, styloid process, mastoid notch",
+            "insertion": "Body of hyoid bone",
+            "innervation": "Facial nerve (VII), mandibular nerve (V3), hypoglossal nerve (XII)",
+            "blood_supply": "Facial artery, lingual artery"
+        },
+        {
+            "name_jp": "舌骨下筋群",
+            "name_en": "Infrahyoid muscles",
+            "origin": "Manubrium, clavicle, thyroid cartilage",
+            "insertion": "Body of hyoid bone, thyroid cartilage",
+            "innervation": "Ansa cervicalis (C1-C3)",
+            "blood_supply": "Superior thyroid artery, inferior thyroid artery"
+        },
+        {
+            "name_jp": "斜角筋",
+            "name_en": "Scalene muscles",
+            "origin": "Transverse processes of cervical vertebrae",
+            "insertion": "First and second ribs",
+            "innervation": "Cervical spinal nerves (C3-C8)",
+            "blood_supply": "Ascending cervical artery, inferior thyroid artery"
+        }
+    ],
+    "上肢の筋肉 (Upper Limb Muscles)": [
+        {
+            "name_jp": "三角筋",
+            "name_en": "Deltoid",
+            "origin": "Lateral third of clavicle, acromion, spine of scapula",
+            "insertion": "Deltoid tuberosity of humerus",
+            "innervation": "Axillary nerve (C5-C6)",
+            "blood_supply": "Posterior circumflex humeral artery"
+        },
+        {
+            "name_jp": "棘上筋",
+            "name_en": "Supraspinatus",
+            "origin": "Supraspinous fossa of scapula",
+            "insertion": "Greater tubercle of humerus",
+            "innervation": "Suprascapular nerve (C5-C6)",
+            "blood_supply": "Suprascapular artery"
+        },
+        {
+            "name_jp": "棘下筋",
+            "name_en": "Infraspinatus",
+            "origin": "Infraspinous fossa of scapula",
+            "insertion": "Greater tubercle of humerus",
+            "innervation": "Suprascapular nerve (C5-C6)",
+            "blood_supply": "Suprascapular and circumflex scapular arteries"
+        },
+        {
+            "name_jp": "小円筋",
+            "name_en": "Teres minor",
+            "origin": "Lateral border of scapula",
+            "insertion": "Greater tubercle of humerus",
+            "innervation": "Axillary nerve (C5-C6)",
+            "blood_supply": "Circumflex scapular artery"
+        },
+        {
+            "name_jp": "大円筋",
+            "name_en": "Teres major",
+            "origin": "Inferior angle of scapula",
+            "insertion": "Medial lip of intertubercular sulcus of humerus",
+            "innervation": "Lower subscapular nerve (C5-C6)",
+            "blood_supply": "Circumflex scapular artery"
+        },
+        {
+            "name_jp": "肩甲下筋",
+            "name_en": "Subscapularis",
+            "origin": "Subscapular fossa",
+            "insertion": "Lesser tubercle of humerus",
+            "innervation": "Upper and lower subscapular nerves (C5-C6)",
+            "blood_supply": "Subscapular artery"
+        },
+        {
+            "name_jp": "上腕二頭筋",
+            "name_en": "Biceps brachii",
+            "origin": "Short head: coracoid process; Long head: supraglenoid tubercle",
+            "insertion": "Radial tuberosity and bicipital aponeurosis",
+            "innervation": "Musculocutaneous nerve (C5-C6)",
+            "blood_supply": "Brachial artery"
+        },
+        {
+            "name_jp": "上腕三頭筋",
+            "name_en": "Triceps brachii",
+            "origin": "Long head: infraglenoid tubercle; Lateral and medial heads: posterior humerus",
+            "insertion": "Olecranon process of ulna",
+            "innervation": "Radial nerve (C6-C8)",
+            "blood_supply": "Deep brachial artery"
+        },
+        {
+            "name_jp": "上腕筋",
+            "name_en": "Brachialis",
+            "origin": "Distal half of anterior humerus",
+            "insertion": "Coronoid process and tuberosity of ulna",
+            "innervation": "Musculocutaneous nerve (C5-C6)",
+            "blood_supply": "Radial recurrent artery"
+        },
+        {
+            "name_jp": "腕橈骨筋",
+            "name_en": "Brachioradialis",
+            "origin": "Lateral supracondylar ridge of humerus",
+            "insertion": "Styloid process of radius",
+            "innervation": "Radial nerve (C5-C6)",
+            "blood_supply": "Radial recurrent artery"
+        },
+        {
+            "name_jp": "円回内筋",
+            "name_en": "Pronator teres",
+            "origin": "Medial epicondyle of humerus and coronoid process of ulna",
+            "insertion": "Lateral surface of radius",
+            "innervation": "Median nerve (C6-C7)",
+            "blood_supply": "Ulnar and radial arteries"
+        },
+        {
+            "name_jp": "回外筋",
+            "name_en": "Supinator",
+            "origin": "Lateral epicondyle of humerus and supinator crest of ulna",
+            "insertion": "Lateral, posterior, and anterior surfaces of proximal radius",
+            "innervation": "Deep branch of radial nerve (C6-C7)",
+            "blood_supply": "Recurrent interosseous artery"
+        }
+    ],
+    "体幹の筋肉 (Trunk Muscles)": [
+        {
+            "name_jp": "大胸筋",
+            "name_en": "Pectoralis major",
+            "origin": "Clavicle, sternum, and costal cartilages of ribs 1-6",
+            "insertion": "Lateral lip of intertubercular sulcus of humerus",
+            "innervation": "Medial and lateral pectoral nerves (C5-T1)",
+            "blood_supply": "Thoracoacromial artery, lateral thoracic artery"
+        },
+        {
+            "name_jp": "小胸筋",
+            "name_en": "Pectoralis minor",
+            "origin": "Ribs 3-5",
+            "insertion": "Coracoid process of scapula",
+            "innervation": "Medial pectoral nerve (C8-T1)",
+            "blood_supply": "Thoracoacromial artery"
+        },
+        {
+            "name_jp": "前鋸筋",
+            "name_en": "Serratus anterior",
+            "origin": "Ribs 1-8",
+            "insertion": "Medial border of scapula",
+            "innervation": "Long thoracic nerve (C5-C7)",
+            "blood_supply": "Lateral thoracic artery"
+        },
+        {
+            "name_jp": "肋間筋",
+            "name_en": "Intercostal muscles",
+            "origin": "Inferior border of ribs",
+            "insertion": "Superior border of ribs below",
+            "innervation": "Intercostal nerves",
+            "blood_supply": "Intercostal arteries"
+        },
+        {
+            "name_jp": "腹直筋",
+            "name_en": "Rectus abdominis",
+            "origin": "Pubic crest and symphysis",
+            "insertion": "Xiphoid process and costal cartilages of ribs 5-7",
+            "innervation": "Lower six thoracoabdominal nerves (T7-T12)",
+            "blood_supply": "Superior and inferior epigastric arteries"
+        },
+        {
+            "name_jp": "外腹斜筋",
+            "name_en": "External oblique",
+            "origin": "Lower eight ribs (5-12)",
+            "insertion": "Linea alba, pubic tubercle, iliac crest",
+            "innervation": "Lower six thoracoabdominal nerves and subcostal nerve",
+            "blood_supply": "Lower intercostal arteries, deep circumflex iliac artery"
+        },
+        {
+            "name_jp": "内腹斜筋",
+            "name_en": "Internal oblique",
+            "origin": "Thoracolumbar fascia, iliac crest, inguinal ligament",
+            "insertion": "Ribs 10-12, linea alba, pubis",
+            "innervation": "Lower thoracoabdominal nerves, iliohypogastric and ilioinguinal nerves",
+            "blood_supply": "Lower intercostal arteries, deep circumflex iliac artery"
+        },
+        {
+            "name_jp": "腹横筋",
+            "name_en": "Transversus abdominis",
+            "origin": "Costal cartilages 7-12, thoracolumbar fascia, iliac crest, inguinal ligament",
+            "insertion": "Linea alba, pubic crest",
+            "innervation": "Lower thoracoabdominal nerves, iliohypogastric and ilioinguinal nerves",
+            "blood_supply": "Deep circumflex iliac artery, inferior epigastric artery"
+        },
+        {
+            "name_jp": "広背筋",
+            "name_en": "Latissimus dorsi",
+            "origin": "Spinous processes of T7-L5, thoracolumbar fascia, iliac crest, ribs 9-12",
+            "insertion": "Intertubercular sulcus of humerus",
+            "innervation": "Thoracodorsal nerve (C6-C8)",
+            "blood_supply": "Thoracodorsal artery"
+        },
+        {
+            "name_jp": "脊柱起立筋",
+            "name_en": "Erector spinae",
+            "origin": "Posterior sacrum, iliac crest, spinous processes of lumbar and lower thoracic vertebrae",
+            "insertion": "Ribs and transverse processes of cervical and thoracic vertebrae",
+            "innervation": "Dorsal rami of spinal nerves",
+            "blood_supply": "Lateral sacral artery, intercostal arteries"
+        },
+        {
+            "name_jp": "菱形筋",
+            "name_en": "Rhomboid major/minor",
+            "origin": "Spinous processes of C7-T5",
+            "insertion": "Medial border of scapula",
+            "innervation": "Dorsal scapular nerve (C5)",
+            "blood_supply": "Dorsal scapular artery"
+        },
+        {
+            "name_jp": "多裂筋",
+            "name_en": "Multifidus",
+            "origin": "Sacrum, iliac crest, transverse processes of vertebrae",
+            "insertion": "Spinous processes of vertebrae above",
+            "innervation": "Dorsal rami of spinal nerves",
+            "blood_supply": "Lumbar arteries, posterior intercostal arteries"
+        }
+    ],
+    "下肢の筋肉 (Lower Limb Muscles)": [
+        {
+            "name_jp": "大臀筋",
+            "name_en": "Gluteus maximus",
+            "origin": "Ilium, sacrum, coccyx, and sacrotuberous ligament",
+            "insertion": "Gluteal tuberosity of femur and iliotibial tract",
+            "innervation": "Inferior gluteal nerve (L5-S2)",
+            "blood_supply": "Superior and inferior gluteal arteries"
+        },
+        {
+            "name_jp": "中臀筋",
+            "name_en": "Gluteus medius",
+            "origin": "External surface of ilium",
+            "insertion": "Greater trochanter of femur",
+            "innervation": "Superior gluteal nerve (L4-S1)",
+            "blood_supply": "Superior gluteal artery"
+        },
+        {
+            "name_jp": "小臀筋",
+            "name_en": "Gluteus minimus",
+            "origin": "External surface of ilium",
+            "insertion": "Greater trochanter of femur",
+            "innervation": "Superior gluteal nerve (L4-S1)",
+            "blood_supply": "Superior gluteal artery"
+        },
+        {
+            "name_jp": "大腿直筋",
+            "name_en": "Rectus femoris",
+            "origin": "Anterior inferior iliac spine",
+            "insertion": "Patella and tibial tuberosity via patellar ligament",
+            "innervation": "Femoral nerve (L2-L4)",
+            "blood_supply": "Lateral circumflex femoral artery"
+        },
+        {
+            "name_jp": "外側広筋",
+            "name_en": "Vastus lateralis",
+            "origin": "Greater trochanter and linea aspera of femur",
+            "insertion": "Patella and tibial tuberosity via patellar ligament",
+            "innervation": "Femoral nerve (L2-L4)",
+            "blood_supply": "Lateral circumflex femoral artery"
+        },
+        {
+            "name_jp": "内側広筋",
+            "name_en": "Vastus medialis",
+            "origin": "Intertrochanteric line and linea aspera of femur",
+            "insertion": "Patella and tibial tuberosity via patellar ligament",
+            "innervation": "Femoral nerve (L2-L4)",
+            "blood_supply": "Femoral and profunda femoris arteries"
+        },
+        {
+            "name_jp": "中間広筋",
+            "name_en": "Vastus intermedius",
+            "origin": "Anterior and lateral surfaces of femoral shaft",
+            "insertion": "Patella and tibial tuberosity via patellar ligament",
+            "innervation": "Femoral nerve (L2-L4)",
+            "blood_supply": "Lateral circumflex femoral artery"
+        },
+        {
+            "name_jp": "大腿二頭筋",
+            "name_en": "Biceps femoris",
+            "origin": "Long head: ischial tuberosity; Short head: linea aspera",
+            "insertion": "Head of fibula",
+            "innervation": "Long head: tibial nerve; Short head: common fibular nerve",
+            "blood_supply": "Perforating branches of profunda femoris artery"
+        },
+        {
+            "name_jp": "半膜様筋",
+            "name_en": "Semimembranosus",
+            "origin": "Ischial tuberosity",
+            "insertion": "Medial condyle of tibia",
+            "innervation": "Tibial nerve (L5-S2)",
+            "blood_supply": "Perforating branches of profunda femoris artery"
+        },
+        {
+            "name_jp": "半腱様筋",
+            "name_en": "Semitendinosus",
+            "origin": "Ischial tuberosity",
+            "insertion": "Medial surface of tibia",
+            "innervation": "Tibial nerve (L5-S2)",
+            "blood_supply": "Perforating branches of profunda femoris artery"
+        },
+        {
+            "name_jp": "縫工筋",
+            "name_en": "Sartorius",
+            "origin": "Anterior superior iliac spine",
+            "insertion": "Medial surface of tibia",
+            "innervation": "Femoral nerve (L2-L3)",
+            "blood_supply": "Femoral artery"
+        },
+        {
+            "name_jp": "薄筋",
+            "name_en": "Gracilis",
+            "origin": "Inferior pubic ramus",
+            "insertion": "Medial surface of tibia",
+            "innervation": "Obturator nerve (L2-L3)",
+            "blood_supply": "Obturator artery"
+        },
+        {
+            "name_jp": "腓腹筋",
+            "name_en": "Gastrocnemius",
+            "origin": "Medial and lateral condyles of femur",
+            "insertion": "Posterior surface of calcaneus via Achilles tendon",
+            "innervation": "Tibial nerve (S1-S2)",
+            "blood_supply": "Sural arteries"
+        },
+        {
+            "name_jp": "ヒラメ筋",
+            "name_en": "Soleus",
+            "origin": "Head and shaft of fibula, soleal line of tibia",
+            "insertion": "Posterior surface of calcaneus via Achilles tendon",
+            "innervation": "Tibial nerve (S1-S2)",
+            "blood_supply": "Posterior tibial artery"
+        },
+        {
+            "name_jp": "前脛骨筋",
+            "name_en": "Tibialis anterior",
+            "origin": "Lateral condyle and upper half of lateral tibia",
+            "insertion": "Medial cuneiform and base of first metatarsal",
+            "innervation": "Deep fibular nerve (L4-L5)",
+            "blood_supply": "Anterior tibial artery"
+        },
+        {
+            "name_jp": "長趾伸筋",
+            "name_en": "Extensor digitorum longus",
+            "origin": "Lateral condyle of tibia and anterior surface of fibula",
+            "insertion": "Middle and distal phalanges of lateral four digits",
+            "innervation": "Deep fibular nerve (L5-S1)",
+            "blood_supply": "Anterior tibial artery"
+        },
+        {
+            "name_jp": "長母趾伸筋",
+            "name_en": "Extensor hallucis longus",
+            "origin": "Middle part of anterior surface of fibula",
+            "insertion": "Distal phalanx of great toe",
+            "innervation": "Deep fibular nerve (L5)",
+            "blood_supply": "Anterior tibial artery"
+        }
+    ]
+}

@@ -16,6 +16,13 @@ $( document ).ready(function(){
     // ノードクリック時の隣接ノード表示（フォーカスモード）
     cy.on('tap', 'node', function(evt) {
       const node = evt.target;
+      
+      // nodeが有効かチェック
+      if (!node || typeof node.id !== 'function') {
+        console.warn('custom.js: 無効なノードがタップされました');
+        return;
+      }
+      
       const nodeId = node.id();
       const nodeName = node.data('name') || node.data('shared_name') || '';
       

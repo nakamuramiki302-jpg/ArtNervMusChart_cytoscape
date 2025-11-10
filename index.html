@@ -70,6 +70,11 @@
             🔗
         </div>
         
+        <!-- ノード上のGoogle検索ボタン -->
+        <button id="node-search-btn" onclick="googleSearchSelectedNode()" style="display: none; position: absolute; background: #4285f4; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; z-index: 1000; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 16px; padding: 0;">
+            🔍
+        </button>
+        
         <!-- Neighbors Panel -->
         <div class="neighbors-panel" id="neighbors-panel" ng-show="selectedNodeNeighbors.length > 0">
             <button type="button" class="close-neighbors-btn" onclick="toggleNeighborsPanel()" style="position: absolute; top: 5px; right: 5px; background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">×</button>
@@ -165,6 +170,9 @@
       <script src="scripts/translation-loader.js"></script>
 
       <script>
+            // 選択されたノードの情報を保存
+            let currentSelectedNodeName = '';
+            
             // Google検索関数
             function googleSearchNode(nodeName) {
                   console.log('🔍 Google検索:', nodeName);
@@ -182,6 +190,49 @@
                   // Google検索URLを開く（新しいタブで）
                   const searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(searchQuery + ' anatomy');
                   window.open(searchUrl, '_blank');
+            }
+            
+            // 選択されたノードをGoogle検索
+            function googleSearchSelectedNode() {
+                  if (currentSelectedNodeName) {
+                        googleSearchNode(currentSelectedNodeName);
+                  }
+            }
+            
+            // ノード上に検索ボタンを表示
+            function showNodeSearchButton(node) {
+                  const cy = window.cy;
+                  if (!cy || !node) return;
+                  
+                  const btn = document.getElementById('node-search-btn');
+                  if (!btn) return;
+                  
+                  // ノードの位置を取得
+                  const pos = node.renderedPosition();
+                  const zoom = cy.zoom();
+                  const pan = cy.pan();
+                  
+                  // ボタンをノードの右上に配置
+                  const offsetX = 40; // ノードの右側
+                  const offsetY = -40; // ノードの上側
+                  
+                  btn.style.left = (pos.x + offsetX) + 'px';
+                  btn.style.top = (pos.y + offsetY) + 'px';
+                  btn.style.display = 'block';
+                  
+                  // 現在のノード名を保存
+                  currentSelectedNodeName = node.data('name') || node.data('shared_name') || '';
+                  
+                  console.log('検索ボタン表示:', currentSelectedNodeName, 'at', pos);
+            }
+            
+            // 検索ボタンを非表示
+            function hideNodeSearchButton() {
+                  const btn = document.getElementById('node-search-btn');
+                  if (btn) {
+                        btn.style.display = 'none';
+                  }
+                  currentSelectedNodeName = '';
             }
             
             // 直接検索関数
@@ -346,6 +397,9 @@
                   
                   // フローティングボタンの状態を更新
                   updateFloatingNeighborsButton();
+                  
+                  // 検索ボタンを非表示
+                  hideNodeSearchButton();
             }
 
             // 検索結果選択関数
@@ -934,6 +988,11 @@
                   setTimeout(function() {
                         updateFloatingNeighborsButton();
                   }, 100);
+                  
+                  // ノード上に検索ボタンを表示
+                  setTimeout(function() {
+                        showNodeSearchButton(targetNode);
+                  }, 400);
             }
 
             // 直接ノード選択関数（後方互換性のため残す）

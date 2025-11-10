@@ -593,16 +593,20 @@
                   });
 
                   // 全ノードに共通のテキストスタイルを適用（日本語+英語表示）
+                  console.log('ノードラベル設定開始 - 翻訳関数:', typeof translateEnglishToJapanese, '翻訳データ:', typeof translationDataLoaded !== 'undefined' ? translationDataLoaded : 'undefined');
+                  
+                  let translatedCount = 0;
                   cy.nodes().forEach(function (node) {
                         const originalText = node.data('name') || node.data('shared_name') || '';
                         
                         // 日本語翻訳を試みる
                         let displayText = originalText;
-                        if (typeof translateEnglishToJapanese === 'function' && translationDataLoaded) {
+                        if (typeof translateEnglishToJapanese === 'function' && typeof translationDataLoaded !== 'undefined' && translationDataLoaded) {
                               const japaneseText = translateEnglishToJapanese(originalText);
                               if (japaneseText !== originalText) {
                                     // 日本語と英語の両方を表示（改行で区切る）
                                     displayText = japaneseText + '\n' + originalText;
+                                    translatedCount++;
                               }
                         }
                         
@@ -622,6 +626,8 @@
                               'text-outline-opacity': 0.8
                         });
                   });
+                  
+                  console.log('ノードラベル設定完了 - 翻訳されたノード数:', translatedCount, '/ 総ノード数:', cy.nodes().length);
 
                   console.log('色分け完了:', colorCounts);
                   console.log('エッジ数:', cy.edges().length);
@@ -715,8 +721,11 @@
                   // ターゲットノードのラベルを日本語+英語で表示
                   const originalLabel = targetNode.data('name') || targetNode.data('shared_name') || '';
                   let targetLabel = originalLabel;
-                  if (typeof translateEnglishToJapanese === 'function' && translationDataLoaded) {
+                  console.log('ターゲットノード翻訳チェック:', originalLabel, '翻訳関数:', typeof translateEnglishToJapanese, '翻訳データ:', typeof translationDataLoaded !== 'undefined' ? translationDataLoaded : 'undefined');
+                  
+                  if (typeof translateEnglishToJapanese === 'function' && typeof translationDataLoaded !== 'undefined' && translationDataLoaded) {
                         const japaneseLabel = translateEnglishToJapanese(originalLabel);
+                        console.log('翻訳結果:', originalLabel, '→', japaneseLabel);
                         if (japaneseLabel !== originalLabel) {
                               // 日本語と英語の両方を表示（改行で区切る）
                               targetLabel = japaneseLabel + '\n' + originalLabel;
@@ -788,7 +797,7 @@
                               // 隣接ノードのラベルを日本語+英語で表示
                               const originalNeighborLabel = neighbor.data('name') || neighbor.data('shared_name') || '';
                               let neighborLabel = originalNeighborLabel;
-                              if (typeof translateEnglishToJapanese === 'function' && translationDataLoaded) {
+                              if (typeof translateEnglishToJapanese === 'function' && typeof translationDataLoaded !== 'undefined' && translationDataLoaded) {
                                     const japaneseLabel = translateEnglishToJapanese(originalNeighborLabel);
                                     if (japaneseLabel !== originalNeighborLabel) {
                                           // 日本語と英語の両方を表示（改行で区切る）

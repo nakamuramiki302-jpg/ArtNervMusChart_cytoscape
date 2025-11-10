@@ -53,14 +53,24 @@ function loadTranslationData() {
     setTimeout(updateAllNodeLabels, 500);
     setTimeout(updateAllNodeLabels, 1000);
     setTimeout(updateAllNodeLabels, 2000);
+    setTimeout(updateAllNodeLabels, 3000);
+    setTimeout(updateAllNodeLabels, 4000);
     
     // applyAnatomyColors()も再実行して、翻訳付きで色分けを適用
     setTimeout(function() {
         if (typeof applyAnatomyColors === 'function') {
-            console.log('翻訳データ読み込み後にapplyAnatomyColors()を再実行');
+            console.log('🔄 翻訳データ読み込み後にapplyAnatomyColors()を再実行');
             applyAnatomyColors();
         }
-    }, 2500);
+    }, 3500);
+    
+    // さらに確実にするため、もう一度実行
+    setTimeout(function() {
+        if (typeof applyAnatomyColors === 'function') {
+            console.log('🔄 最終確認: applyAnatomyColors()を再実行');
+            applyAnatomyColors();
+        }
+    }, 5000);
 }
 
 // 英語→日本語翻訳

@@ -592,7 +592,7 @@
                         });
                   });
 
-                  // 全ノードに共通のテキストスタイルを適用（日本語対応）
+                  // 全ノードに共通のテキストスタイルを適用（日本語+英語表示）
                   cy.nodes().forEach(function (node) {
                         const originalText = node.data('name') || node.data('shared_name') || '';
                         
@@ -601,20 +601,21 @@
                         if (typeof translateEnglishToJapanese === 'function' && translationDataLoaded) {
                               const japaneseText = translateEnglishToJapanese(originalText);
                               if (japaneseText !== originalText) {
-                                    displayText = japaneseText;
+                                    // 日本語と英語の両方を表示（改行で区切る）
+                                    displayText = japaneseText + '\n' + originalText;
                               }
                         }
                         
-                        const shortText = truncateText(displayText, 8); // 8文字まで
+                        const shortText = truncateText(displayText, 20); // 文字数制限を緩和
 
                         node.style({
                               'label': shortText,
-                              'font-size': '6px', // 全体表示時は小さなフォント
+                              'font-size': '5px', // 2行表示のため少し小さく
                               'color': '#333',
                               'text-valign': 'center',
                               'text-halign': 'center',
                               'text-wrap': 'wrap',
-                              'text-max-width': '14px', // ノード幅に収まるサイズ
+                              'text-max-width': '20px', // 幅を少し広げる
                               'text-opacity': 1,
                               'text-outline-width': 0.5,
                               'text-outline-color': 'white',
@@ -711,12 +712,14 @@
                   const targetSize = isMobile ? '80px' : '60px'; // スマホでは大きく表示
                   const borderWidth = isMobile ? '10px' : '8px';
                   
-                  // ターゲットノードのラベルを日本語に翻訳
-                  let targetLabel = targetNode.data('name') || targetNode.data('shared_name') || '';
+                  // ターゲットノードのラベルを日本語+英語で表示
+                  const originalLabel = targetNode.data('name') || targetNode.data('shared_name') || '';
+                  let targetLabel = originalLabel;
                   if (typeof translateEnglishToJapanese === 'function' && translationDataLoaded) {
-                        const japaneseLabel = translateEnglishToJapanese(targetLabel);
-                        if (japaneseLabel !== targetLabel) {
-                              targetLabel = japaneseLabel;
+                        const japaneseLabel = translateEnglishToJapanese(originalLabel);
+                        if (japaneseLabel !== originalLabel) {
+                              // 日本語と英語の両方を表示（改行で区切る）
+                              targetLabel = japaneseLabel + '\n' + originalLabel;
                         }
                   }
 
@@ -729,8 +732,8 @@
                         'height': targetSize,
                         'z-index': '999',
                         // 選択されたノードのテキストを大きく
-                        'font-size': '12px',
-                        'text-max-width': '50px',
+                        'font-size': '10px',
+                        'text-max-width': '70px',
                         'text-outline-width': 1.5,
                         'text-outline-color': 'white',
                         'text-outline-opacity': 1
@@ -782,12 +785,14 @@
                               const neighborType = getNodeType(neighbor);
                               const neighborColors = anatomyColors[neighborType];
                               
-                              // 隣接ノードのラベルを日本語に翻訳
-                              let neighborLabel = neighbor.data('name') || neighbor.data('shared_name') || '';
+                              // 隣接ノードのラベルを日本語+英語で表示
+                              const originalNeighborLabel = neighbor.data('name') || neighbor.data('shared_name') || '';
+                              let neighborLabel = originalNeighborLabel;
                               if (typeof translateEnglishToJapanese === 'function' && translationDataLoaded) {
-                                    const japaneseLabel = translateEnglishToJapanese(neighborLabel);
-                                    if (japaneseLabel !== neighborLabel) {
-                                          neighborLabel = japaneseLabel;
+                                    const japaneseLabel = translateEnglishToJapanese(originalNeighborLabel);
+                                    if (japaneseLabel !== originalNeighborLabel) {
+                                          // 日本語と英語の両方を表示（改行で区切る）
+                                          neighborLabel = japaneseLabel + '\n' + originalNeighborLabel;
                                     }
                               }
                               
@@ -799,8 +804,8 @@
                                     'width': '40px',
                                     'height': '40px',
                                     // 隣接ノードのテキストを適度に大きく
-                                    'font-size': '8px',
-                                    'text-max-width': '35px',
+                                    'font-size': '7px',
+                                    'text-max-width': '45px',
                                     'text-outline-width': 1,
                                     'text-outline-color': 'white',
                                     'text-outline-opacity': 0.9

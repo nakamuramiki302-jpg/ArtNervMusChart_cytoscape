@@ -49,9 +49,18 @@ function loadTranslationData() {
             console.log('英語→日本語エントリー数:', Object.keys(translationMap.enToJp).length);
             console.log('日本語→英語エントリー数:', Object.keys(translationMap.jpToEn).length);
             
-            // サンプル表示
-            const sampleKeys = Object.keys(translationMap.enToJp).slice(0, 5);
-            console.log('サンプル翻訳:', sampleKeys.map(key => `${key} → ${translationMap.enToJp[key]}`));
+            // サンプル表示（より詳細に）
+            const sampleKeys = Object.keys(translationMap.enToJp).slice(0, 10);
+            console.log('サンプル翻訳:');
+            sampleKeys.forEach(key => {
+                console.log(`  ${key} → ${translationMap.enToJp[key]}`);
+            });
+            
+            // 特定のキーをテスト
+            console.log('特定キーテスト:');
+            console.log('  trapezius:', translationMap.enToJp['trapezius']);
+            console.log('  masseter:', translationMap.enToJp['masseter']);
+            console.log('  brain:', translationMap.enToJp['brain']);
             
             // 翻訳データ読み込み完了後、Cytoscapeのノードラベルを更新
             updateAllNodeLabels();
@@ -67,19 +76,37 @@ function translateEnglishToJapanese(englishText) {
     
     const normalized = englishText.toLowerCase().trim();
     
+    // デバッグ用（最初の10回のみログ出力）
+    if (!translateEnglishToJapanese.callCount) translateEnglishToJapanese.callCount = 0;
+    if (translateEnglishToJapanese.callCount < 10) {
+        console.log(`翻訳試行 ${translateEnglishToJapanese.callCount + 1}: "${englishText}" → "${normalized}"`);
+        translateEnglishToJapanese.callCount++;
+    }
+    
     // 完全一致を探す
     if (translationMap.enToJp[normalized]) {
-        return translationMap.enToJp[normalized];
+        const result = translationMap.enToJp[normalized];
+        if (translateEnglishToJapanese.callCount <= 10) {
+            console.log(`  ✓ 完全一致: ${result}`);
+        }
+        return result;
     }
     
     // 部分一致を探す（英語名が含まれている場合）
     for (const enKey in translationMap.enToJp) {
         if (normalized.includes(enKey) || enKey.includes(normalized)) {
-            return translationMap.enToJp[enKey];
+            const result = translationMap.enToJp[enKey];
+            if (translateEnglishToJapanese.callCount <= 10) {
+                console.log(`  ✓ 部分一致 (${enKey}): ${result}`);
+            }
+            return result;
         }
     }
     
     // 翻訳が見つからない場合は元のテキストを返す
+    if (translateEnglishToJapanese.callCount <= 10) {
+        console.log(`  ✗ 翻訳なし`);
+    }
     return englishText;
 }
 

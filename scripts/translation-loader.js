@@ -106,6 +106,40 @@ function translateEnglishToJapanese(englishText) {
         }
     }
     
+    // anatomyTranslations辞書を使って単語ベースの翻訳を試みる
+    if (typeof anatomyTranslations !== 'undefined') {
+        let translatedParts = [];
+        const words = englishText.split(' ');
+        let hasTranslation = false;
+        
+        for (const word of words) {
+            const wordLower = word.toLowerCase().replace(/[()]/g, '');
+            let translated = false;
+            
+            // 辞書から翻訳を探す（英語→日本語の逆引き）
+            for (const [jp, en] of Object.entries(anatomyTranslations)) {
+                if (en.toLowerCase() === wordLower) {
+                    translatedParts.push(jp);
+                    translated = true;
+                    hasTranslation = true;
+                    break;
+                }
+            }
+            
+            if (!translated) {
+                translatedParts.push(word);
+            }
+        }
+        
+        if (hasTranslation) {
+            const result = translatedParts.join('');
+            if (translateEnglishToJapanese.callCount <= 10) {
+                console.log(`  ✓ 単語ベース翻訳: ${result}`);
+            }
+            return result;
+        }
+    }
+    
     // 翻訳が見つからない場合は元のテキストを返す
     if (translateEnglishToJapanese.callCount <= 10) {
         console.log(`  ✗ 翻訳なし`);

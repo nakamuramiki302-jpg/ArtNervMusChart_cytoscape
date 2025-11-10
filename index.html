@@ -54,7 +54,7 @@
                         <span onclick="handleSearchResultClick(this.parentElement)" ontouchend="handleSearchResultClick(this.parentElement)" style="flex: 1;">
                             {{result.name}} <span class="badge {{result.anatomyType || result.type}}">{{result.anatomyType || result.type}}</span>
                         </span>
-                        <button onclick="googleSearchNode('{{result.originalName || result.name}}')" style="background: #4285f4; color: white; border: none; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;">🔍</button>
+                        <button onclick="googleSearchNode(this.parentElement.getAttribute('data-result-name'))" style="background: #4285f4; color: white; border: none; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;">🔍</button>
                     </li>
                 </ul>
             </div>
@@ -78,7 +78,7 @@
                     <span ng-click="selectNeighborFromList(neighbor.id, neighbor.name, $index)" onclick="window.directSelectNeighbor(this.parentElement.getAttribute('data-neighbor-id'), this.parentElement.getAttribute('data-neighbor-name'), this.parentElement.getAttribute('data-neighbor-index'))" style="flex: 1;">
                         {{neighbor.name}} <span class="badge {{neighbor.anatomyType || neighbor.type}}">{{neighbor.anatomyType || neighbor.type}}</span>
                     </span>
-                    <button onclick="googleSearchNode('{{neighbor.originalName || neighbor.name}}')" style="background: #4285f4; color: white; border: none; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;">🔍</button>
+                    <button onclick="googleSearchNode(this.parentElement.getAttribute('data-neighbor-name'))" style="background: #4285f4; color: white; border: none; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;">🔍</button>
                 </li>
             </ul>
         </div>

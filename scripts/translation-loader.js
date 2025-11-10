@@ -86,11 +86,28 @@ function translateEnglishToJapanese(englishText) {
         translateEnglishToJapanese.callCount++;
     }
     
-    // 完全一致を探す
+    // 完全一致を探す（muscleTranslations優先）
     if (translationMap.enToJp[normalized]) {
         const result = translationMap.enToJp[normalized];
         if (translateEnglishToJapanese.callCount <= 10) {
-            console.log(`  ✓ 完全一致: ${result}`);
+            console.log(`  ✓ 完全一致（筋肉辞書）: ${result}`);
+        }
+        return result;
+    }
+    
+    // allNodesTranslations辞書で完全一致を探す
+    if (typeof allNodesTranslations !== 'undefined' && allNodesTranslations[englishText]) {
+        const result = allNodesTranslations[englishText];
+        if (translateEnglishToJapanese.callCount <= 10) {
+            console.log(`  ✓ 完全一致（全ノード辞書）: ${result}`);
+        }
+        return result;
+    }
+    
+    if (typeof allNodesTranslations !== 'undefined' && allNodesTranslations[normalized]) {
+        const result = allNodesTranslations[normalized];
+        if (translateEnglishToJapanese.callCount <= 10) {
+            console.log(`  ✓ 完全一致（全ノード辞書・正規化）: ${result}`);
         }
         return result;
     }

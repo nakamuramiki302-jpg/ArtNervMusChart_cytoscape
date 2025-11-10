@@ -52,6 +52,9 @@ function loadTranslationData() {
             // サンプル表示
             const sampleKeys = Object.keys(translationMap.enToJp).slice(0, 5);
             console.log('サンプル翻訳:', sampleKeys.map(key => `${key} → ${translationMap.enToJp[key]}`));
+            
+            // 翻訳データ読み込み完了後、Cytoscapeのノードラベルを更新
+            updateAllNodeLabels();
         })
         .catch(error => {
             console.error('翻訳データ読み込みエラー:', error);
@@ -132,6 +135,70 @@ function getJapaneseNodeLabel(node) {
     return japaneseName !== englishName ? japaneseName : englishName;
 }
 
+// 全ノードのラベルを更新する関数
+function updateAllNodeLabels() {
+    console.log('=== 全ノードラベル更新開始 ===');
+    
+    // Cytoscapeインスタンスが準備できるまで待つ
+    const checkCytoscape = setInterval(function() {
+        if (window.cy && window.cy.nodes().length > 0) {
+            clearInterval(checkCytoscape);
+            console.log('Cytoscape準備完了、ノード数:', window.cy.nodes().length);
+            
+            // 全ノードのラベルを更新
+            window.cy.nodes().forEach(function(node) {
+                const originalText = node.data('name') || node.data('shared_name') || '';
+                const japaneseText = translateEnglishToJapanese(originalText);
+                
+                if (japaneseText !== originalText) {
+                    // 日本語と英語の両方を表示
+                    const displayText = japaneseText + '\n' + originalText;
+                    const shortText = truncateText(displayText, 20);
+                    node.style('label', shortText);
+                    console.log('ラベル更新:', originalText, '→', japaneseText);
+                }
+            });
+            
+            console.log('✅ 全ノードラベル更新完了');
+        }
+    }, 100);
+    
+    // 10秒後にタイムアウト
+    setTimeout(function() {
+        clearInterval(checkCytoscape);
+    }, 10000);
+}
+
+// テキストを短縮する関数（ここでも定義）
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    
+    // 改行を考慮して短縮
+    const lines = text.split('\n');
+    if (lines.length > 1) {
+        // 2行の場合、各行を短縮
+        return lines.map(line => {
+            if (line.length <= maxLength / 2) return line;
+            return line.substring(0, maxLength / 2 - 1) + '…';
+        }).join('\n');
+    }
+    
+    // 単語の境界で切る
+    const words = text.split(' ');
+    let result = '';
+    
+    for (let word of words) {
+        if ((result + word).length <= maxLength) {
+            result += (result ? ' ' : '') + word;
+        } else {
+            break;
+        }
+    }
+    
+    return result || text.substring(0, maxLength - 1) + '…';
+}
+
 // ページ読み込み時に翻訳データを読み込む
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadTranslationData);
@@ -139,4 +206,24 @@ if (document.readyState === 'loading') {
     loadTranslationData();
 }
 
+// デバッグ用：翻訳をテストする関数
+function testTranslation() {
+    console.log('=== 翻訳テスト ===');
+    console.log('翻訳データ読み込み状態:', translationDataLoaded);
+    console.log('翻訳マップサイズ:', Object.keys(translationMap.enToJp).length);
+    
+    // テストケース
+    const testCases = ['masseter', 'temporalis', 'frontalis', 'buccinator'];
+    testCases.forEach(function(testCase) {
+        const result = translateEnglishToJapanese(testCase);
+        console.log(`翻訳テスト: ${testCase} → ${result}`);
+    });
+}
+
+// グローバルに公開
+window.testTranslation = testTranslation;
+window.updateAllNodeLabels = updateAllNodeLabels;
+
 console.log('translation-loader.js 読み込み完了');
+console.log('デバッグ用: window.testTranslation() で翻訳をテストできます');
+console.log('デバッグ用: window.updateAllNodeLabels() でラベルを手動更新できます');

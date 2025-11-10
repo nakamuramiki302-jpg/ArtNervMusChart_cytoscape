@@ -71,8 +71,8 @@
         </div>
         
         <!-- ノード上のGoogle検索ボタン -->
-        <button id="node-search-btn" onclick="googleSearchSelectedNode()" style="display: none; position: absolute; background: #4285f4; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; z-index: 1000; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 16px; padding: 0;">
-            🔍
+        <button id="node-search-btn" onclick="googleSearchSelectedNode()" style="display: none; position: absolute; background: #4285f4; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 1000; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 14px; padding: 0;">
+            👀
         </button>
         
         <!-- Neighbors Panel -->
@@ -207,14 +207,14 @@
                   const btn = document.getElementById('node-search-btn');
                   if (!btn) return;
                   
-                  // ノードの位置を取得
+                  // ノードの位置とサイズを取得
                   const pos = node.renderedPosition();
-                  const zoom = cy.zoom();
-                  const pan = cy.pan();
+                  const width = node.renderedWidth();
+                  const height = node.renderedHeight();
                   
-                  // ボタンをノードの右上に配置
-                  const offsetX = 40; // ノードの右側
-                  const offsetY = -40; // ノードの上側
+                  // ボタンをノードの右下端に配置（文字にかぶらないように）
+                  const offsetX = width / 2 + 5; // ノードの右端から少し外側
+                  const offsetY = height / 2 + 5; // ノードの下端から少し外側
                   
                   btn.style.left = (pos.x + offsetX) + 'px';
                   btn.style.top = (pos.y + offsetY) + 'px';
@@ -223,7 +223,7 @@
                   // 現在のノード名を保存
                   currentSelectedNodeName = node.data('name') || node.data('shared_name') || '';
                   
-                  console.log('検索ボタン表示:', currentSelectedNodeName, 'at', pos);
+                  console.log('検索ボタン表示:', currentSelectedNodeName, 'at', {x: pos.x + offsetX, y: pos.y + offsetY});
             }
             
             // 検索ボタンを非表示

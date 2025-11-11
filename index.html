@@ -41,7 +41,7 @@
         <div class="search-panel" id="draggable-search-panel" style="width: 240px !important; cursor: move;">
             <button type="button" class="close-search-btn" onclick="toggleSearchPanel()" style="position: absolute; top: 5px; right: 5px; background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">×</button>
             <div class="search-container" style="display: flex !important; flex-direction: column !important; gap: 8px;">
-                <input type="text" id="search-input" ng-model="searchQuery" placeholder="search anatomy terms" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()" style="width: 100% !important; box-sizing: border-box;">
+                <input type="text" id="search-input" ng-model="searchQuery" placeholder="解剖学用語を検索 (日本語/English)" class="form-control search-input" onkeydown="if(event.keyCode===13) directSearch()" style="width: 100% !important; box-sizing: border-box;">
                 <div class="button-row" style="display: flex !important; gap: 8px; width: 100%;">
                     <button type="button" class="btn btn-primary search-btn" onclick="directSearch()" style="flex: 1 !important; box-sizing: border-box;">Search</button>
                     <button type="button" class="btn btn-secondary clear-btn" onclick="directClear()" style="flex: 1 !important; box-sizing: border-box;">Clear</button>
@@ -150,11 +150,14 @@
       <script src="data/networks.js"></script>
       <script src="data/styles.js"></script>
       <script src="data/translation-dictionary.js"></script>
+      <script src="data/translations.js"></script>
+      <script src="data/all-nodes-translation.js"></script>
 
       <script src="scripts/65d77273.vendor.js"></script>
       <script src="scripts/1d327552.scripts.js"></script>
       <script src="scripts/custom.js"></script>
       <script src="scripts/anatomy-fix.js"></script>
+      <script src="scripts/translation-loader.js"></script>
 
       <script>
             // 直接検索関数
@@ -184,27 +187,54 @@
                   const results = [];
                   const searchTerm = query.toLowerCase().trim();
 
-                  // 翻訳機能があれば使用
-                  let translatedTerm = searchTerm;
-                  if (typeof translateToEnglish === 'function') {
+                  // 翻訳機能を使用（新しい翻訳ローダー優先）
+                  let searchTerms = [searchTerm];
+                  
+                  if (typeof searchWithTranslation === 'function') {
                         try {
-                              translatedTerm = translateToEnglish(query).toLowerCase().trim();
-                              console.log('翻訳:', query, '->', translatedTerm);
+                              searchTerms = searchWithTranslation(query);
+                              console.log('翻訳検索語:', searchTerms);
                         } catch (e) {
                               console.log('翻訳エラー:', e);
+                        }
+                  } else if (typeof translateToEnglish === 'function') {
+                        try {
+                              const translatedTerm = translateToEnglish(query).toLowerCase().trim();
+                              searchTerms.push(translatedTerm);
+                              console.log('旧翻訳:', query, '->', translatedTerm);
+                        } catch (e) {
+                              console.log('旧翻訳エラー:', e);
                         }
                   }
 
                   cy.nodes().forEach(function (node) {
                         const name = (node.data('name') || '').toLowerCase();
                         const sharedName = (node.data('shared_name') || '').toLowerCase();
+                        
+                        // いずれかの検索語にマッチするかチェック
+                        let matched = false;
+                        for (let term of searchTerms) {
+                              if (name.includes(term) || sharedName.includes(term)) {
+                                    matched = true;
+                                    break;
+                              }
+                        }
 
-                        if (name.includes(searchTerm) || name.includes(translatedTerm) ||
-                              sharedName.includes(searchTerm) || sharedName.includes(translatedTerm)) {
-
+                        if (matched) {
+                              // 日本語名を取得（翻訳ローダーを使用）
+                              let displayName = node.data('name') || node.data('shared_name');
+                              if (typeof translateEnglishToJapanese === 'function') {
+                                    const japaneseName = translateEnglishToJapanese(displayName);
+                                    // 翻訳が見つかった場合は「日本語 (English)」形式で表示
+                                    if (japaneseName !== displayName) {
+                                          displayName = japaneseName + ' (' + displayName + ')';
+                                    }
+                              }
+                              
                               const result = {
                                     id: node.id(),
-                                    name: node.data('name') || node.data('shared_name'),
+                                    name: displayName,
+                                    originalName: node.data('name') || node.data('shared_name'),
                                     type: node.data('P2attr') || node.data('P1attr') || 'unknown',
                                     selected: false
                               };
@@ -803,9 +833,21 @@
                   const neighborsList = [];
                   neighborsArray.forEach(function (neighbor) {
                         const neighborType = getNodeType(neighbor);
+                        const originalName = neighbor.data('name') || neighbor.data('shared_name');
+                        
+                        // 日本語翻訳を試みる
+                        let displayName = originalName;
+                        if (typeof translateEnglishToJapanese === 'function' && typeof translationDataLoaded !== 'undefined' && translationDataLoaded) {
+                              const japaneseName = translateEnglishToJapanese(originalName);
+                              if (japaneseName !== originalName) {
+                                    displayName = japaneseName + ' (' + originalName + ')';
+                              }
+                        }
+                        
                         neighborsList.push({
                               id: neighbor.id(),
-                              name: neighbor.data('name') || neighbor.data('shared_name'),
+                              name: displayName,
+                              originalName: originalName,
                               type: neighbor.data('P2attr') || neighbor.data('P1attr') || 'unknown',
                               anatomyType: neighborType,
                               selected: false

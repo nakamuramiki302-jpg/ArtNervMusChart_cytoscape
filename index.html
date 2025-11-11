@@ -50,8 +50,11 @@
             <div class="search-results" ng-show="searchResults.length > 0">
                 <h4>Search Results ({{searchResults.length}} items)</h4>
                 <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="result in searchResults" ng-class="{'selected-item': result.selected}" onclick="handleSearchResultClick(this)" ontouchend="handleSearchResultClick(this)" data-result-id="{{result.id}}" data-result-name="{{result.name}}" data-result-index="{{$index}}" style="cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); user-select: none;">
-                        {{result.name}} <span class="badge {{result.anatomyType || result.type}}">{{result.anatomyType || result.type}}</span>
+                    <li class="list-group-item" ng-repeat="result in searchResults" ng-class="{'selected-item': result.selected}" data-result-id="{{result.id}}" data-result-name="{{result.originalName || result.name}}" data-result-index="{{$index}}" style="cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); user-select: none; display: flex; justify-content: space-between; align-items: center;">
+                        <span onclick="handleSearchResultClick(this.parentElement)" ontouchend="handleSearchResultClick(this.parentElement)" style="flex: 1;">
+                            {{result.name}} <span class="badge {{result.anatomyType || result.type}}">{{result.anatomyType || result.type}}</span>
+                        </span>
+                        <button onclick="googleSearchNode(this.parentElement.getAttribute('data-result-name'))" style="background: #4285f4; color: white; border: none; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;">🔍</button>
                     </li>
                 </ul>
             </div>
@@ -67,12 +70,20 @@
             🔗
         </div>
         
+        <!-- ノード上のGoogle検索ボタン -->
+        <button id="node-search-btn" onclick="googleSearchSelectedNode()" style="display: none; position: absolute; background: #FFD700; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 1000; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 14px; padding: 0;">
+            👀
+        </button>
+        
         <!-- Neighbors Panel -->
         <div class="neighbors-panel" id="neighbors-panel" ng-show="selectedNodeNeighbors.length > 0">
             <button type="button" class="close-neighbors-btn" onclick="toggleNeighborsPanel()" style="position: absolute; top: 5px; right: 5px; background: none; border: none; font-size: 16px; cursor: pointer; color: #666; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 10;">×</button>
             <ul class="list-group">
-                <li class="list-group-item" ng-repeat="neighbor in selectedNodeNeighbors" ng-class="{'selected-item': neighbor.selected}" ng-click="selectNeighborFromList(neighbor.id, neighbor.name, $index)" onclick="window.directSelectNeighbor(this.getAttribute('data-neighbor-id'), this.getAttribute('data-neighbor-name'), this.getAttribute('data-neighbor-index'))" data-neighbor-id="{{neighbor.id}}" data-neighbor-name="{{neighbor.name}}" data-neighbor-index="{{$index}}" style="cursor: pointer;">
-                    {{neighbor.name}} <span class="badge {{neighbor.anatomyType || neighbor.type}}">{{neighbor.anatomyType || neighbor.type}}</span>
+                <li class="list-group-item" ng-repeat="neighbor in selectedNodeNeighbors" ng-class="{'selected-item': neighbor.selected}" data-neighbor-id="{{neighbor.id}}" data-neighbor-name="{{neighbor.originalName || neighbor.name}}" data-neighbor-index="{{$index}}" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <span ng-click="selectNeighborFromList(neighbor.id, neighbor.name, $index)" onclick="window.directSelectNeighbor(this.parentElement.getAttribute('data-neighbor-id'), this.parentElement.getAttribute('data-neighbor-name'), this.parentElement.getAttribute('data-neighbor-index'))" style="flex: 1;">
+                        {{neighbor.name}} <span class="badge {{neighbor.anatomyType || neighbor.type}}">{{neighbor.anatomyType || neighbor.type}}</span>
+                    </span>
+                    <button onclick="googleSearchNode(this.parentElement.getAttribute('data-neighbor-name'))" style="background: #4285f4; color: white; border: none; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;">🔍</button>
                 </li>
             </ul>
         </div>
@@ -160,6 +171,71 @@
       <script src="scripts/translation-loader.js"></script>
 
       <script>
+            // 選択されたノードの情報を保存
+            let currentSelectedNodeName = '';
+            
+            // Google検索関数
+            function googleSearchNode(nodeName) {
+                  console.log('🔍 Google検索:', nodeName);
+                  
+                  // 日本語が含まれている場合は日本語も含めて検索
+                  const hasJapanese = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(nodeName);
+                  let searchQuery = nodeName;
+                  
+                  // 「日本語 (English)」形式の場合、英語部分を抽出
+                  const match = nodeName.match(/\(([^)]+)\)/);
+                  if (match) {
+                        searchQuery = match[1]; // 括弧内の英語名を使用
+                  }
+                  
+                  // Google検索URLを開く（新しいタブで）
+                  const searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(searchQuery + ' anatomy');
+                  window.open(searchUrl, '_blank');
+            }
+            
+            // 選択されたノードをGoogle検索
+            function googleSearchSelectedNode() {
+                  if (currentSelectedNodeName) {
+                        googleSearchNode(currentSelectedNodeName);
+                  }
+            }
+            
+            // ノード上に検索ボタンを表示
+            function showNodeSearchButton(node) {
+                  const cy = window.cy;
+                  if (!cy || !node) return;
+                  
+                  const btn = document.getElementById('node-search-btn');
+                  if (!btn) return;
+                  
+                  // ノードの位置とサイズを取得
+                  const pos = node.renderedPosition();
+                  const width = node.renderedWidth();
+                  const height = node.renderedHeight();
+                  
+                  // ボタンをノードの右下端に配置（文字にかぶらないように）
+                  const offsetX = width / 2 + 5; // ノードの右端から少し外側
+                  const offsetY = height / 2 + 5; // ノードの下端から少し外側
+                  
+                  btn.style.left = (pos.x + offsetX) + 'px';
+                  btn.style.top = (pos.y + offsetY) + 'px';
+                  btn.style.display = 'block';
+                  
+                  // 現在のノード名を保存
+                  currentSelectedNodeName = node.data('name') || node.data('shared_name') || '';
+                  
+                  console.log('検索ボタン表示:', currentSelectedNodeName, 'at', {x: pos.x + offsetX, y: pos.y + offsetY});
+            }
+            
+            // 検索ボタンを非表示
+            function hideNodeSearchButton() {
+                  const btn = document.getElementById('node-search-btn');
+                  if (btn) {
+                        btn.style.display = 'none';
+                  }
+                  currentSelectedNodeName = '';
+            }
+            
             // 直接検索関数
             function directSearch() {
                   console.log('=== 直接検索実行 ===');
@@ -322,6 +398,9 @@
                   
                   // フローティングボタンの状態を更新
                   updateFloatingNeighborsButton();
+                  
+                  // 検索ボタンを非表示
+                  hideNodeSearchButton();
             }
 
             // 検索結果選択関数
@@ -881,6 +960,11 @@
                   setTimeout(function() {
                         updateFloatingNeighborsButton();
                   }, 100);
+                  
+                  // ノード上に検索ボタンを表示
+                  setTimeout(function() {
+                        showNodeSearchButton(targetNode);
+                  }, 400);
             }
 
             // 直接ノード選択関数（後方互換性のため残す）

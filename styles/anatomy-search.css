@@ -165,6 +165,20 @@ body {
     animation: fadeIn 0.3s ease-in;
 }
 
+/* スマホ対応：検索結果の高さを画面サイズに応じて調整 */
+@media (max-width: 768px) {
+    .search-results {
+        max-height: calc(100vh - 250px) !important; /* 画面高さから検索欄とマージンを引く */
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important; /* スムーズスクロール */
+    }
+    
+    .search-panel {
+        max-height: calc(100vh - 40px) !important; /* 画面高さからマージンを引く */
+        overflow-y: auto !important;
+    }
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -289,6 +303,15 @@ body {
     z-index: 1001;
     max-height: 300px; /* 小さく */
     overflow-y: auto;
+}
+
+/* スマホ対応：隣接ノードパネルの高さを画面サイズに応じて調整 */
+@media (max-width: 768px) {
+    .neighbors-panel {
+        max-height: calc(100vh - 100px) !important; /* 画面高さからマージンを引く */
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important; /* スムーズスクロール */
+    }
 }
 
 .neighbors-panel h4 {

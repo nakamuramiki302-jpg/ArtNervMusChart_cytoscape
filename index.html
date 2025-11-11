@@ -670,8 +670,10 @@
 
                   // スマホかどうかを判定
                   const isMobile = window.innerWidth <= 768;
-                  const targetSize = isMobile ? '80px' : '60px'; // スマホでは大きく表示
-                  const borderWidth = isMobile ? '10px' : '8px';
+                  const targetSize = isMobile ? '120px' : '60px'; // スマホでは大きく表示
+                  const borderWidth = isMobile ? '12px' : '8px';
+                  const fontSize = isMobile ? '16px' : '12px';
+                  const textMaxWidth = isMobile ? '100px' : '50px';
 
                   targetNode.style({
                         'border-width': borderWidth,
@@ -681,8 +683,8 @@
                         'height': targetSize,
                         'z-index': '999',
                         // 選択されたノードのテキストを大きく
-                        'font-size': '12px',
-                        'text-max-width': '50px',
+                        'font-size': fontSize,
+                        'text-max-width': textMaxWidth,
                         'text-outline-width': 1.5,
                         'text-outline-color': 'white',
                         'text-outline-opacity': 1
@@ -702,12 +704,19 @@
                         return;
                   }
 
-                  // 動的半径計算（半分のサイズ）
-                  let radius = Math.max(75, neighborCount * 8);
-                  if (neighborCount > 15) radius = 125;
-                  if (neighborCount > 25) radius = 150;
+                  // 動的半径計算（スマホでは大きく）
+                  let radius;
+                  if (isMobile) {
+                        radius = Math.max(150, neighborCount * 12);
+                        if (neighborCount > 15) radius = 220;
+                        if (neighborCount > 25) radius = 280;
+                  } else {
+                        radius = Math.max(75, neighborCount * 8);
+                        if (neighborCount > 15) radius = 125;
+                        if (neighborCount > 25) radius = 150;
+                  }
 
-                  console.log('計算された半径:', radius);
+                  console.log('計算された半径:', radius, 'isMobile:', isMobile);
 
                   // 全てのレイアウトを停止
                   cy.nodes().unlock();
@@ -734,15 +743,20 @@
                               const neighborType = getNodeType(neighbor);
                               const neighborColors = anatomyColors[neighborType];
                               
+                              const neighborSize = isMobile ? '70px' : '40px';
+                              const neighborBorderWidth = isMobile ? '6px' : '4px';
+                              const neighborFontSize = isMobile ? '12px' : '8px';
+                              const neighborTextMaxWidth = isMobile ? '65px' : '35px';
+                              
                               neighbor.style({
-                                    'border-width': '4px',
+                                    'border-width': neighborBorderWidth,
                                     'border-color': neighborColors.border,
                                     'background-color': neighborColors.background,
-                                    'width': '40px',
-                                    'height': '40px',
+                                    'width': neighborSize,
+                                    'height': neighborSize,
                                     // 隣接ノードのテキストを適度に大きく
-                                    'font-size': '8px',
-                                    'text-max-width': '35px',
+                                    'font-size': neighborFontSize,
+                                    'text-max-width': neighborTextMaxWidth,
                                     'text-outline-width': 1,
                                     'text-outline-color': 'white',
                                     'text-outline-opacity': 0.9
@@ -772,8 +786,9 @@
                   setTimeout(function() {
                         forceCircularArrangement();
                         
-                        // 最終調整 - パネルに隠れないように大きなパディングを設定
-                        cy.fit(targetNode.union(neighbors), 120);
+                        // 最終調整 - パネルに隠れないように大きなパディングを設定（スマホでは小さく）
+                        const fitPadding = isMobile ? 50 : 120;
+                        cy.fit(targetNode.union(neighbors), fitPadding);
                         console.log('✅ 最終配置完了');
                         
                         // デバッグ情報出力

@@ -163,6 +163,9 @@ body {
     max-height: 300px;
     overflow-y: auto;
     animation: fadeIn 0.3s ease-in;
+    /* スクロールを確実に有効化 */
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* スマホ対応：検索結果の高さを画面サイズに応じて調整 */
@@ -171,6 +174,11 @@ body {
         max-height: calc(100vh - 250px) !important; /* 画面高さから検索欄とマージンを引く */
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important; /* スムーズスクロール */
+        touch-action: pan-y !important; /* 縦スクロールを許可 */
+    }
+    
+    .list-group {
+        touch-action: pan-y !important; /* リスト内のスクロールを許可 */
     }
     
     .search-panel {

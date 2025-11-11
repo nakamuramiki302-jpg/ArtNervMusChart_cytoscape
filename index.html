@@ -1302,6 +1302,15 @@
                         if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
                               return;
                         }
+                        
+                        // 検索結果リストやリストアイテムをタッチした場合はドラッグしない（スクロール可能にする）
+                        if (e.target.classList.contains('search-results') || 
+                            e.target.classList.contains('list-group') ||
+                            e.target.classList.contains('list-group-item') ||
+                            e.target.closest('.search-results') ||
+                            e.target.closest('.list-group-item')) {
+                              return;
+                        }
 
                         // タッチイベントとマウスイベントの両方に対応
                         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
